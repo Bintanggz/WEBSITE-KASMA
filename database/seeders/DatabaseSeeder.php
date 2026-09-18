@@ -47,10 +47,21 @@ class DatabaseSeeder extends Seeder
         $students = collect([$primaryStudent]);
         for ($i = 2; $i <= 32; $i++) {
             $nim = sprintf('2204%02d', $i);
+            $name = match($i) {
+                12 => 'Farhan Pratama',
+                25 => 'Siti Nurhaliza',
+                default => 'Mahasiswa ' . $i,
+            };
+            $email = match($i) {
+                12 => 'farhan@kasma.edu',
+                25 => 'siti@kasma.edu',
+                default => 'mhs' . $i . '@kasma.edu',
+            };
+
             $students->push(User::create([
-                'name' => 'Mahasiswa ' . $i,
+                'name' => $name,
                 'nim' => $nim,
-                'email' => 'mhs' . $i . '@kasma.edu',
+                'email' => $email,
                 'password' => Hash::make('password'),
                 'role' => 'mahasiswa',
                 'phone_number' => '0812345678' . str_pad($i, 2, '0', STR_PAD_LEFT),

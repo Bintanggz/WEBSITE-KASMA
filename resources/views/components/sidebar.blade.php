@@ -159,24 +159,40 @@
 
         </div>
 
-        <!-- User Profile Footer -->
-        <div class="pt-4 border-t border-stone-100">
+        <!-- User Profile Footer & Logout -->
+        <div class="pt-4 border-t border-stone-100 space-y-2">
             <div class="flex items-center justify-between p-2 rounded-lg bg-stone-50/70 border border-stone-200/60">
-                <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-full bg-stone-200 text-stone-700 flex items-center justify-center font-semibold text-xs border border-stone-300">
-                        {{ $role === 'bendahara' ? 'NP' : 'HA' }}
+                <div class="flex items-center gap-2.5 min-w-0">
+                    <div class="w-8 h-8 rounded-full bg-stone-200 text-stone-700 flex items-center justify-center font-semibold text-xs border border-stone-300 shrink-0">
+                        {{ strtoupper(substr(auth()->user()->name ?? ($role === 'bendahara' ? 'Nadya' : 'Hafizh'), 0, 2)) }}
                     </div>
                     <div class="min-w-0">
                         <p class="text-xs font-semibold text-stone-900 truncate">
-                            {{ $role === 'bendahara' ? 'Nadya Putri' : 'Hafizh Al-Fatih' }}
+                            {{ auth()->user()->name ?? ($role === 'bendahara' ? 'Nadya Putri' : 'Hafizh Al-Fatih') }}
                         </p>
                         <p class="text-[11px] text-stone-500 truncate">
-                            {{ $role === 'bendahara' ? 'Bendahara Kelas' : 'Mahasiswa (220401)' }}
+                            @if(auth()->user()?->isMahasiswa() || $role === 'mahasiswa')
+                                NIM: {{ auth()->user()->nim ?? '220401' }}
+                            @else
+                                Bendahara Kelas
+                            @endif
                         </p>
                     </div>
                 </div>
-                <div class="w-2 h-2 rounded-full bg-emerald-500" title="Aktif"></div>
+                <div class="w-2 h-2 rounded-full bg-emerald-500 shrink-0" title="Sesi Aktif"></div>
             </div>
+
+            <!-- Logout Button Form -->
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" 
+                        class="w-full flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-stone-500 hover:text-rose-700 hover:bg-rose-50 transition border border-transparent hover:border-rose-100">
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    <span>Keluar dari Akun</span>
+                </button>
+            </form>
         </div>
     </div>
 </aside>

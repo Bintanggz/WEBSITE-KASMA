@@ -11,7 +11,18 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'role' => \App\Http\Middleware\EnsureUserHasRole::class,
+        ]);
+
+        $middleware->redirectGuestsTo('/login');
+
+        $middleware->redirectUsersTo(function () {
+            $user = auth()->user();
+            return $user && $user->role === 'bendahara'
+                ? route('bendahara.dashboard')
+                : route('mahasiswa.dashboard');
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
