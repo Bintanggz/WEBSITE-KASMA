@@ -26,11 +26,45 @@ class UserFactory extends Factory
     {
         return [
             'name' => fake()->name(),
+            'nim' => fake()->unique()->numerify('2204##'),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
+            'role' => 'mahasiswa',
+            'phone_number' => fake()->phoneNumber(),
+            'is_active' => true,
             'remember_token' => Str::random(10),
         ];
+    }
+
+    /**
+     * Indicate that the user is a bendahara.
+     */
+    public function bendahara(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'bendahara',
+        ]);
+    }
+
+    /**
+     * Indicate that the user is a mahasiswa.
+     */
+    public function mahasiswa(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'mahasiswa',
+        ]);
+    }
+
+    /**
+     * Indicate that the user is inactive.
+     */
+    public function inactive(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_active' => false,
+        ]);
     }
 
     /**
