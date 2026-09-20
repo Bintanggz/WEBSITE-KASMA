@@ -56,7 +56,7 @@
             </button>
             @else
             <!-- Bendahara CTA: Record Transaction / Jump to Ledger -->
-            <a href="/bendahara/dashboard#transaksi-kas" 
+            <a href="{{ route('bendahara.transaksi.index') }}" 
                class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg text-white bg-stone-900 hover:bg-stone-800 transition shadow-2xs cursor-pointer">
                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />

@@ -325,10 +325,11 @@
                         </table>
                     </div>
 
-                    <div class="p-3 bg-stone-50 border-t border-stone-100 text-center">
-                        <span class="text-xs text-stone-500">
-                            Menampilkan seluruh riwayat pembukuan kas kelas &bull; Transparan & Akuntabel
-                        </span>
+                    <div class="p-3 bg-stone-50 border-t border-stone-100 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-stone-500 px-5">
+                        <span>Menampilkan riwayat mutasi kas kelas &bull; Transparan &amp; Akuntabel</span>
+                        <a href="{{ route('bendahara.transaksi.index') }}" class="font-semibold text-stone-800 hover:text-stone-950 underline">
+                            Kelola &amp; Pembukuan Lengkap &rarr;
+                        </a>
                     </div>
                 </div>
 

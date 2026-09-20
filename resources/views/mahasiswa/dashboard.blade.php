@@ -348,6 +348,13 @@
                         @endforelse
                     </ul>
                 </div>
+
+                <div class="mt-3.5 pt-3 border-t border-stone-100 text-center">
+                    <a href="{{ route('mahasiswa.keuangan.index') }}" class="text-xs font-semibold text-stone-700 hover:text-stone-900 underline inline-flex items-center gap-1">
+                        <span>Buka Transparansi Arus Kas Lengkap</span>
+                        <span>&rarr;</span>
+                    </a>
+                </div>
             </div>
 
             <!-- Bendahara Contact Box -->

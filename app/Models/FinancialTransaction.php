@@ -84,4 +84,20 @@ class FinancialTransaction extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    /**
+     * Determine if this transaction originated from an approved student payment.
+     */
+    public function isPaymentBased(): bool
+    {
+        return $this->payment_id !== null;
+    }
+
+    /**
+     * Determine if this transaction was manually recorded by the treasurer.
+     */
+    public function isManual(): bool
+    {
+        return $this->payment_id === null;
+    }
 }
