@@ -21,8 +21,8 @@ class PaymentController extends Controller
         $method = $request->input('payment_method');
         $file = $request->file('proof_file');
 
-        // Store proof image on public storage disk
-        $path = $file->store('proofs', 'public');
+        // Store proof image on private storage disk
+        $path = $file->store('proofs', 'local');
 
         $now = Carbon::now();
 
@@ -47,5 +47,42 @@ class PaymentController extends Controller
             : 'Bukti pembayaran berhasil dikirim! Menunggu verifikasi bendahara.';
 
         return redirect()->route('mahasiswa.dashboard')->with('success', $message);
+    }
+
+    /**
+     * Display student's payment history and status tracking.
+     */
+    public function history()
+    {
+        $user = auth()->user();
+
+        $payments = Payment::whereHas('studentDue', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })
+        ->with(['studentDue.cashPeriod', 'verifier'])
+        ->latest('payment_date')
+        ->latest('id')
+        ->get();
+
+        $totalApprovedAmount = $payments->where('status', 'approved')->sum('amount');
+        $pendingCount = $payments->where('status', 'pending')->count();
+        $approvedCount = $payments->where('status', 'approved')->count();
+        $rejectedCount = $payments->where('status', 'rejected')->count();
+
+        $unpaidDues = $user->studentDues()
+            ->where('status', 'unpaid')
+            ->with(['cashPeriod', 'pendingPayment'])
+            ->get()
+            ->sortBy(fn ($d) => $d->cashPeriod->week_number ?? 0);
+
+        return view('mahasiswa.riwayat.index', compact(
+            'user',
+            'payments',
+            'totalApprovedAmount',
+            'pendingCount',
+            'approvedCount',
+            'rejectedCount',
+            'unpaidDues'
+        ));
     }
 }

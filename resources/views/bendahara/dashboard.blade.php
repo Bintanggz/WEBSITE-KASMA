@@ -272,7 +272,7 @@
                                 @forelse($transactions as $trx)
                                     @php
                                         $isIncome = $trx->type === 'income';
-                                        $receiptUrl = $trx->receipt_path ? asset('storage/' . $trx->receipt_path) : null;
+                                        $receiptUrl = $trx->payment ? route('payments.proof', $trx->payment) : ($trx->receipt_path ? asset('storage/' . $trx->receipt_path) : null);
                                         $formattedDate = $trx->transaction_date ? \Carbon\Carbon::parse($trx->transaction_date)->format('d M Y') : $trx->created_at->format('d M Y');
                                     @endphp
                                     <tr class="hover:bg-stone-50/50 transition" 
@@ -354,7 +354,7 @@
                             @php
                                 $student = $payment->studentDue?->user;
                                 $periodName = $payment->studentDue?->cashPeriod?->name ?? 'Pekan Kas';
-                                $proofUrl = $payment->proof_file_path ? asset('storage/' . $payment->proof_file_path) : null;
+                                $proofUrl = $payment->proof_file_path ? route('payments.proof', $payment) : null;
                             @endphp
                             <div class="p-3.5 rounded-lg border border-stone-200 bg-stone-50/60 space-y-2.5">
                                 <div class="flex items-start justify-between">

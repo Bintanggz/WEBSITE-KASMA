@@ -270,8 +270,8 @@
                                                     method: '{{ $payment->payment_method === 'qris' ? 'QRIS Kas' : 'Transfer BCA' }}',
                                                     time: '{{ $payment->payment_date ? $payment->payment_date->format('d M Y, H:i') : '-' }}',
                                                     weeks: '{{ $payment->studentDue?->cashPeriod?->name }}',
-                                                    proof_url: '{{ asset('storage/' . $payment->proof_file_path) }}',
-                                                    is_pending: false
+                                                    proof_url: '{{ route('payments.proof', $payment) }}',
+                                                    payment_id: {{ $payment->id }}
                                                 })"
                                                 class="text-[11px] text-stone-600 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 px-2 py-1 rounded transition cursor-pointer">
                                             Lihat

@@ -55,7 +55,7 @@ class StorePaymentRequest extends FormRequest
             }
 
             $userId = $this->user()->id;
-            $dues = StudentDue::with('pendingPayment')->whereIn('id', $dueIds)->get();
+            $dues = StudentDue::with(['pendingPayment', 'approvedPayment', 'cashPeriod'])->whereIn('id', $dueIds)->get();
 
             if ($dues->count() !== count(array_unique($dueIds))) {
                 $validator->errors()->add('student_due_ids', 'Sebagian pekan iuran yang dipilih tidak ditemukan.');
@@ -68,7 +68,7 @@ class StorePaymentRequest extends FormRequest
                     return;
                 }
 
-                if ($due->isPaid()) {
+                if ($due->isPaid() || $due->approvedPayment !== null) {
                     $validator->errors()->add('student_due_ids', 'Pekan iuran ' . ($due->cashPeriod->name ?? '') . ' sudah lunas.');
                     return;
                 }

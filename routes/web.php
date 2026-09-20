@@ -9,6 +9,7 @@ use App\Http\Controllers\Bendahara\PaymentVerificationController;
 use App\Http\Controllers\Mahasiswa\DashboardController as MahasiswaDashboardController;
 use App\Http\Controllers\Mahasiswa\PaymentController;
 use App\Http\Controllers\Mahasiswa\StudentDueController;
+use App\Http\Controllers\PaymentProofController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -44,6 +45,10 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
 
+Route::get('/payments/{payment}/proof', [PaymentProofController::class, 'show'])
+    ->middleware('auth')
+    ->name('payments.proof');
+
 /*
 |--------------------------------------------------------------------------
 | Mahasiswa Protected Routes
@@ -56,6 +61,7 @@ Route::middleware(['auth', 'role:mahasiswa'])
     ->group(function () {
         Route::get('/dashboard', [MahasiswaDashboardController::class, 'index'])->name('dashboard');
         Route::get('/iuran', [StudentDueController::class, 'index'])->name('iuran.index');
+        Route::get('/riwayat', [PaymentController::class, 'history'])->name('riwayat.index');
         Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');
     });
 
@@ -78,7 +84,8 @@ Route::middleware(['auth', 'role:bendahara'])
         Route::patch('/iuran/{period}/activate', [CashPeriodController::class, 'activate'])->name('iuran.activate');
         Route::patch('/iuran/{period}/deactivate', [CashPeriodController::class, 'deactivate'])->name('iuran.deactivate');
 
-        // Payments & Ledger
+        // Payment Verification & Ledger
+        Route::get('/verifikasi', [PaymentVerificationController::class, 'index'])->name('verifikasi.index');
         Route::patch('/payments/{payment}/approve', [PaymentVerificationController::class, 'approve'])->name('payments.approve');
         Route::patch('/payments/{payment}/reject', [PaymentVerificationController::class, 'reject'])->name('payments.reject');
         Route::post('/cash-payments', [CashPaymentController::class, 'store'])->name('cash-payments.store');

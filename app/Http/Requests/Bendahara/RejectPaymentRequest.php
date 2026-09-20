@@ -22,7 +22,7 @@ class RejectPaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'rejection_reason' => ['nullable', 'string', 'max:255'],
+            'rejection_reason' => ['required', 'string', 'min:3', 'max:255'],
         ];
     }
 

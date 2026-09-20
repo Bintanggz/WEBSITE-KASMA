@@ -105,4 +105,12 @@ class Payment extends Model
     {
         return $this->studentDue?->user;
     }
+
+    /**
+     * Get the secure URL to access the payment proof file.
+     */
+    public function getProofUrlAttribute(): ?string
+    {
+        return $this->proof_file_path ? route('payments.proof', $this) : null;
+    }
 }

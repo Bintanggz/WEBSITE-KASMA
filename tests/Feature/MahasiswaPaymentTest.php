@@ -76,6 +76,7 @@ class MahasiswaPaymentTest extends TestCase
     public function test_mahasiswa_can_submit_payment_proof(): void
     {
         Storage::fake('public');
+        Storage::fake('local');
 
         $file = $this->createFakeJpg('bukti_transfer.jpg');
 
@@ -97,7 +98,7 @@ class MahasiswaPaymentTest extends TestCase
 
         $payment = Payment::where('student_due_id', $this->due->id)->first();
         $this->assertNotNull($payment);
-        Storage::disk('public')->assertExists($payment->proof_file_path);
+        Storage::disk('local')->assertExists($payment->proof_file_path);
     }
 
     public function test_mahasiswa_cannot_submit_payment_for_another_student_due(): void
