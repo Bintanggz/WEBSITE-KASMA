@@ -37,9 +37,9 @@
                     </a>
 
                     <!-- Iuran Kas -->
-                    <a href="/mahasiswa/dashboard#iuran-mingguan" class="flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition">
+                    <a href="{{ route('mahasiswa.iuran.index') }}" class="flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg {{ request()->routeIs('mahasiswa.iuran.*') ? 'bg-stone-100 text-stone-900 font-semibold' : 'text-stone-600 hover:bg-stone-50 hover:text-stone-900' }} transition">
                         <div class="flex items-center gap-3">
-                            <svg class="w-4 h-4 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <svg class="w-4 h-4 {{ request()->routeIs('mahasiswa.iuran.*') ? 'text-stone-700' : 'text-stone-400' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
                             <span>Iuran Kas</span>
@@ -94,16 +94,16 @@
                 <p class="px-3 text-[11px] font-semibold uppercase tracking-wider text-stone-400 mb-2">Menu Bendahara</p>
                 <nav class="space-y-1">
                     <!-- Dashboard -->
-                    <a href="/bendahara/dashboard" class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg {{ request()->is('bendahara/dashboard') ? 'bg-stone-100 text-stone-900' : 'text-stone-600 hover:bg-stone-50 hover:text-stone-900' }} transition">
-                        <svg class="w-4 h-4 text-stone-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <a href="/bendahara/dashboard" class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg {{ request()->routeIs('bendahara.dashboard') ? 'bg-stone-100 text-stone-900 font-semibold' : 'text-stone-600 hover:bg-stone-50 hover:text-stone-900' }} transition">
+                        <svg class="w-4 h-4 {{ request()->routeIs('bendahara.dashboard') ? 'text-stone-700' : 'text-stone-400' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                         </svg>
                         <span>Dashboard</span>
                     </a>
 
                     <!-- Iuran Kas -->
-                    <a href="/bendahara/dashboard#iuran-mingguan" class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition">
-                        <svg class="w-4 h-4 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <a href="{{ route('bendahara.iuran.index') }}" class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg {{ request()->routeIs('bendahara.iuran.*') ? 'bg-stone-100 text-stone-900 font-semibold' : 'text-stone-600 hover:bg-stone-50 hover:text-stone-900' }} transition">
+                        <svg class="w-4 h-4 {{ request()->routeIs('bendahara.iuran.*') ? 'text-stone-700' : 'text-stone-400' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                         <span>Iuran Kas</span>
