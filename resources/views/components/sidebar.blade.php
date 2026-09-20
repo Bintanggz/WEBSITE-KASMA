@@ -29,7 +29,7 @@
                 <p class="px-3 text-[11px] font-semibold uppercase tracking-wider text-stone-400 mb-2">Menu Mahasiswa</p>
                 <nav class="space-y-1">
                     <!-- Dashboard -->
-                    <a href="/mahasiswa/dashboard" class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg bg-stone-100 text-stone-900">
+                    <a href="/mahasiswa/dashboard" class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg {{ request()->is('mahasiswa/dashboard') && !request()->has('view') ? 'bg-stone-100 text-stone-900' : 'text-stone-600 hover:bg-stone-50 hover:text-stone-900' }} transition">
                         <svg class="w-4 h-4 text-stone-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                         </svg>
@@ -37,18 +37,18 @@
                     </a>
 
                     <!-- Iuran Kas -->
-                    <a href="#iuran-mingguan" class="flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition">
+                    <a href="/mahasiswa/dashboard#iuran-mingguan" class="flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition">
                         <div class="flex items-center gap-3">
                             <svg class="w-4 h-4 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
                             <span>Iuran Kas</span>
                         </div>
-                        <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200/60">Pekan 9</span>
+                        <span class="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200/60">Pekan Aktif</span>
                     </a>
 
                     <!-- Riwayat Pembayaran -->
-                    <a href="#riwayat-pembayaran" class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition">
+                    <a href="/mahasiswa/dashboard#riwayat-pembayaran" class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition">
                         <svg class="w-4 h-4 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                         </svg>
@@ -56,7 +56,7 @@
                     </a>
 
                     <!-- Keuangan Kelas -->
-                    <a href="#keuangan-kelas" class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition">
+                    <a href="/mahasiswa/dashboard#keuangan-kelas" class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition">
                         <svg class="w-4 h-4 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                         </svg>
@@ -66,17 +66,25 @@
             </div>
 
             <!-- Student Quick Status Box -->
+            @php
+                $sidePaid = auth()->check() ? auth()->user()->studentDues()->where('status', 'paid')->count() : 0;
+                $sideTotal = \App\Models\CashPeriod::count() ?: 16;
+                $sidePct = $sideTotal > 0 ? round(($sidePaid / $sideTotal) * 100, 1) : 0;
+                $sideUnpaid = auth()->check() ? auth()->user()->studentDues()->where('status', 'unpaid')->count() : 0;
+            @endphp
             <div class="p-3.5 rounded-xl bg-stone-50 border border-stone-200/80 text-xs space-y-2">
                 <div class="flex items-center justify-between">
                     <span class="text-[11px] font-semibold text-stone-500 uppercase tracking-wider">Status Diri</span>
-                    <span class="text-[11px] font-semibold text-emerald-800 font-mono">Bebas Tunggakan</span>
+                    <span class="text-[11px] font-semibold {{ $sideUnpaid == 0 ? 'text-emerald-800' : 'text-rose-700' }} font-mono">
+                        {{ $sideUnpaid == 0 ? 'Bebas Tunggakan' : $sideUnpaid . ' Pekan Tertunggak' }}
+                    </span>
                 </div>
                 <div class="w-full h-1.5 bg-stone-200 rounded-full overflow-hidden">
-                    <div class="h-full bg-emerald-700 rounded-full" style="width: 56.25%"></div>
+                    <div class="h-full bg-emerald-700 rounded-full" style="width: {{ min($sidePct, 100) }}%"></div>
                 </div>
                 <div class="flex items-center justify-between text-[11px] text-stone-500">
-                    <span>Lunas: <strong class="text-stone-700">9 Pekan</strong></span>
-                    <span>Total: <strong class="text-stone-700">16 Pekan</strong></span>
+                    <span>Lunas: <strong class="text-stone-700">{{ $sidePaid }} Pekan</strong></span>
+                    <span>Total: <strong class="text-stone-700">{{ $sideTotal }} Pekan</strong></span>
                 </div>
             </div>
 
@@ -86,7 +94,7 @@
                 <p class="px-3 text-[11px] font-semibold uppercase tracking-wider text-stone-400 mb-2">Menu Bendahara</p>
                 <nav class="space-y-1">
                     <!-- Dashboard -->
-                    <a href="/bendahara/dashboard" class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg bg-stone-100 text-stone-900">
+                    <a href="/bendahara/dashboard" class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg {{ request()->is('bendahara/dashboard') ? 'bg-stone-100 text-stone-900' : 'text-stone-600 hover:bg-stone-50 hover:text-stone-900' }} transition">
                         <svg class="w-4 h-4 text-stone-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                         </svg>
@@ -94,7 +102,7 @@
                     </a>
 
                     <!-- Iuran Kas -->
-                    <a href="#iuran-mingguan" class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition">
+                    <a href="/bendahara/dashboard#iuran-mingguan" class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition">
                         <svg class="w-4 h-4 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
@@ -102,18 +110,25 @@
                     </a>
 
                     <!-- Verifikasi Pembayaran -->
-                    <a href="#verifikasi-pembayaran" class="flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition">
+                    @php
+                        $sidePendingCount = \App\Models\Payment::where('status', 'pending')->count();
+                    @endphp
+                    <a href="/bendahara/dashboard#verifikasi-pembayaran" class="flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition">
                         <div class="flex items-center gap-3">
                             <svg class="w-4 h-4 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                             <span>Verifikasi Pembayaran</span>
                         </div>
-                        <span class="text-[11px] font-semibold px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200/70">3 Baru</span>
+                        @if($sidePendingCount > 0)
+                            <span class="text-[11px] font-semibold px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200/70">
+                                {{ $sidePendingCount }} Baru
+                            </span>
+                        @endif
                     </a>
 
                     <!-- Transaksi -->
-                    <a href="#transaksi-kas" class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition">
+                    <a href="/bendahara/dashboard#transaksi-kas" class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition">
                         <svg class="w-4 h-4 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                         </svg>
@@ -121,18 +136,21 @@
                     </a>
 
                     <!-- Data Mahasiswa -->
-                    <a href="#mahasiswa-kelas" class="flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition">
+                    @php
+                        $sideStuTotal = \App\Models\User::where('role', 'mahasiswa')->where('is_active', true)->count() ?: 32;
+                    @endphp
+                    <a href="/bendahara/dashboard#mahasiswa-kelas" class="flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition">
                         <div class="flex items-center gap-3">
                             <svg class="w-4 h-4 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                             </svg>
                             <span>Data Mahasiswa</span>
                         </div>
-                        <span class="text-xs text-stone-400 font-mono">32</span>
+                        <span class="text-xs text-stone-400 font-mono">{{ $sideStuTotal }}</span>
                     </a>
 
                     <!-- Laporan -->
-                    <a href="#laporan-keuangan" class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition">
+                    <a href="/bendahara/dashboard#laporan-keuangan" class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-stone-600 hover:bg-stone-50 hover:text-stone-900 transition">
                         <svg class="w-4 h-4 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                         </svg>
@@ -142,17 +160,24 @@
             </div>
 
             <!-- Bendahara Milestone Widget -->
+            @php
+                $sideActivePeriod = \App\Models\CashPeriod::where('is_active', true)->first();
+                $sideCollPaid = $sideActivePeriod ? \App\Models\StudentDue::where('cash_period_id', $sideActivePeriod->id)->where('status', 'paid')->count() : 0;
+                $sideCollPct = $sideStuTotal > 0 ? round(($sideCollPaid / $sideStuTotal) * 100, 1) : 0;
+                $sideCollAmount = $sideActivePeriod ? \App\Models\StudentDue::where('cash_period_id', $sideActivePeriod->id)->where('status', 'paid')->sum('amount') : 0;
+                $sideCollTarget = $sideStuTotal * (float) ($sideActivePeriod?->amount ?? 10000);
+            @endphp
             <div class="p-3.5 rounded-xl bg-stone-50 border border-stone-200/80 space-y-2">
                 <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-semibold text-stone-500 uppercase tracking-wider">Koleksi Pekan 9</span>
-                    <span class="text-xs font-semibold text-stone-800 font-mono">28/32 (87%)</span>
+                    <span class="text-[11px] font-semibold text-stone-500 uppercase tracking-wider">Koleksi {{ $sideActivePeriod->name ?? 'Pekan 9' }}</span>
+                    <span class="text-xs font-semibold text-stone-800 font-mono">{{ $sideCollPaid }}/{{ $sideStuTotal }} ({{ $sideCollPct }}%)</span>
                 </div>
                 <div class="w-full h-1.5 bg-stone-200 rounded-full overflow-hidden">
-                    <div class="h-full bg-stone-800 rounded-full" style="width: 87.5%"></div>
+                    <div class="h-full bg-stone-800 rounded-full" style="width: {{ min($sideCollPct, 100) }}%"></div>
                 </div>
                 <div class="flex items-center justify-between text-[11px] text-stone-500">
-                    <span>Kas Masuk: <strong class="text-stone-700 font-mono">280rb</strong></span>
-                    <span>Target: <strong class="text-stone-700 font-mono">320rb</strong></span>
+                    <span>Kas Masuk: <strong class="text-stone-700 font-mono">{{ number_format($sideCollAmount / 1000, 0) }}rb</strong></span>
+                    <span>Target: <strong class="text-stone-700 font-mono">{{ number_format($sideCollTarget / 1000, 0) }}rb</strong></span>
                 </div>
             </div>
             @endif
@@ -186,7 +211,7 @@
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" 
-                        class="w-full flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-stone-500 hover:text-rose-700 hover:bg-rose-50 transition border border-transparent hover:border-rose-100">
+                        class="w-full flex items-center justify-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-stone-500 hover:text-rose-700 hover:bg-rose-50 transition border border-transparent hover:border-rose-100 cursor-pointer">
                     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                     </svg>
