@@ -85,20 +85,20 @@
         <!-- Top Focus Metrics: 1. Current Balance & 2. Weekly Collection -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             
-            <!-- Focus 1: Current Cash Balance -->
+            <!-- Focus 1: Current Cash Balance, Total Income & Total Expenses -->
             <div class="bg-white p-5 rounded-xl border border-stone-200/90 shadow-2xs">
                 <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold text-stone-500 uppercase tracking-wider">Saldo Kas Kelas Saat Ini</span>
+                    <span class="text-xs font-semibold text-stone-500 uppercase tracking-wider">Saldo Kas Riil (Buku Besar)</span>
                     <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/60">Aktif</span>
                 </div>
                 <div class="mt-2.5">
-                    <span class="text-2xl sm:text-3xl font-bold font-mono text-stone-900">
+                    <span class="text-2xl sm:text-3xl font-bold font-mono {{ $currentBalance >= 0 ? 'text-stone-900' : 'text-rose-600' }}">
                         Rp {{ number_format($currentBalance, 0, ',', '.') }}
                     </span>
                 </div>
-                <div class="mt-3 pt-2.5 border-t border-stone-100 flex items-center justify-between text-[11px] text-stone-500">
-                    <span>Rekening BCA Kas</span>
-                    <span class="font-mono text-stone-700 font-medium">873-019-2819</span>
+                <div class="mt-3 pt-2.5 border-t border-stone-100 flex items-center justify-between text-[11px]">
+                    <span class="text-emerald-700 font-medium font-mono" title="Total Pemasukan Kas">+Rp {{ number_format($totalIncome, 0, ',', '.') }}</span>
+                    <span class="text-rose-600 font-medium font-mono" title="Total Pengeluaran Kas">-Rp {{ number_format($totalExpense, 0, ',', '.') }}</span>
                 </div>
             </div>
 
@@ -132,8 +132,8 @@
                     <span class="text-xs text-stone-500 font-mono">(Rp {{ number_format($pendingPaymentsAmount, 0, ',', '.') }})</span>
                 </div>
                 <div class="mt-3 pt-2.5 border-t border-stone-100 flex items-center justify-between text-[11px] text-stone-500">
-                    <span>Setoran Transfer Siswa</span>
-                    <a href="#verifikasi-pembayaran" class="text-amber-800 font-semibold hover:underline">Periksa &rarr;</a>
+                    <span>Setoran Transfer &amp; QRIS</span>
+                    <a href="{{ route('bendahara.verifikasi.index') }}" class="text-amber-800 font-semibold hover:underline">Periksa &rarr;</a>
                 </div>
             </div>
 
@@ -272,7 +272,7 @@
                                 @forelse($transactions as $trx)
                                     @php
                                         $isIncome = $trx->type === 'income';
-                                        $receiptUrl = $trx->payment ? route('payments.proof', $trx->payment) : ($trx->receipt_path ? asset('storage/' . $trx->receipt_path) : null);
+                                        $receiptUrl = ($trx->receipt_path || $trx->payment?->proof_file_path) ? route('transactions.receipt', $trx) : null;
                                         $formattedDate = $trx->transaction_date ? \Carbon\Carbon::parse($trx->transaction_date)->format('d M Y') : $trx->created_at->format('d M Y');
                                     @endphp
                                     <tr class="hover:bg-stone-50/50 transition" 
@@ -419,46 +419,92 @@
                     </div>
                 </div>
 
-                <!-- Focus 6: Quick Management Panel -->
+                <!-- Focus 6: Quick Management & Module Links -->
                 <div id="laporan-keuangan" class="bg-white p-5 rounded-xl border border-stone-200/90 shadow-2xs">
-                    <h4 class="font-semibold text-stone-900 text-sm mb-3">Tindakan Cepat Bendahara</h4>
+                    <h4 class="font-semibold text-stone-900 text-sm mb-3">Akses Cepat &amp; Navigasi Modul</h4>
                     <div class="space-y-2 text-xs">
-                        <button type="button" 
-                                @click="window.print()" 
-                                class="w-full flex items-center justify-between p-2.5 rounded-lg bg-stone-50 hover:bg-stone-100 border border-stone-200 transition text-left cursor-pointer">
-                            <div class="flex items-center gap-2">
-                                <svg class="w-4 h-4 text-stone-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
-                                <span class="font-medium text-stone-800">Cetak / Ekspor Laporan Kas (PDF)</span>
+                        <a href="{{ route('bendahara.verifikasi.index') }}" 
+                           class="w-full flex items-center justify-between p-2.5 rounded-lg bg-stone-50 hover:bg-stone-100 border border-stone-200 transition text-left">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-7 h-7 rounded-lg bg-amber-50 text-amber-800 border border-amber-200/70 flex items-center justify-center shrink-0">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <span class="font-medium text-stone-900 block">Verifikasi Pembayaran Mahasiswa</span>
+                                    <span class="text-[11px] text-stone-500">Persetujuan bukti transfer bank &amp; QRIS</span>
+                                </div>
                             </div>
-                            <span class="text-stone-400">&rarr;</span>
-                        </button>
+                            @if($pendingPaymentsCount > 0)
+                                <span class="text-[10px] font-semibold px-2 py-0.5 rounded bg-amber-100 text-amber-900 font-mono shrink-0">
+                                    {{ $pendingPaymentsCount }} Baru
+                                </span>
+                            @else
+                                <span class="text-stone-400">&rarr;</span>
+                            @endif
+                        </a>
 
-                        <button type="button" 
-                                @click="rekapModalOpen = true"
-                                class="w-full flex items-center justify-between p-2.5 rounded-lg bg-stone-50 hover:bg-stone-100 border border-stone-200 transition text-left cursor-pointer">
-                            <div class="flex items-center gap-2">
-                                <svg class="w-4 h-4 text-stone-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                                </svg>
-                                <span class="font-medium text-stone-800">Rekap Status Pelunasan {{ $totalStudentsCount }} Mahasiswa</span>
+                        <a href="{{ route('bendahara.transaksi.index') }}" 
+                           class="w-full flex items-center justify-between p-2.5 rounded-lg bg-stone-50 hover:bg-stone-100 border border-stone-200 transition text-left">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-7 h-7 rounded-lg bg-stone-100 text-stone-800 border border-stone-200 flex items-center justify-center shrink-0">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <span class="font-medium text-stone-900 block">Buku Transaksi Kas &amp; Pembukuan</span>
+                                    <span class="text-[11px] text-stone-500">Kelola mutasi kas masuk, belanja, &amp; nota kuitansi</span>
+                                </div>
                             </div>
                             <span class="text-stone-400">&rarr;</span>
-                        </button>
+                        </a>
 
-                        <button type="button" 
-                                @click="settingsModalOpen = true"
-                                class="w-full flex items-center justify-between p-2.5 rounded-lg bg-stone-50 hover:bg-stone-100 border border-stone-200 transition text-left cursor-pointer">
-                            <div class="flex items-center gap-2">
-                                <svg class="w-4 h-4 text-stone-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                                <span class="font-medium text-stone-800">Atur Iuran & Rekening Kas</span>
+                        <a href="{{ route('bendahara.iuran.index') }}" 
+                           class="w-full flex items-center justify-between p-2.5 rounded-lg bg-stone-50 hover:bg-stone-100 border border-stone-200 transition text-left">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200/70 flex items-center justify-center shrink-0">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <span class="font-medium text-stone-900 block">Kelola Periode Iuran Kas Mingguan</span>
+                                    <span class="text-[11px] text-stone-500">Pengaturan jadwal semester &amp; nominal per pekan</span>
+                                </div>
                             </div>
                             <span class="text-stone-400">&rarr;</span>
-                        </button>
+                        </a>
+
+                        <a href="{{ route('bendahara.laporan.index') }}" 
+                           class="w-full flex items-center justify-between p-2.5 rounded-lg bg-stone-50 hover:bg-stone-100 border border-stone-200 transition text-left">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-7 h-7 rounded-lg bg-blue-50 text-blue-800 border border-blue-200/70 flex items-center justify-center shrink-0">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <span class="font-medium text-stone-900 block">Laporan &amp; Rekapitulasi Kas</span>
+                                    <span class="text-[11px] text-stone-500">Laporan keuangan lengkap, kepatuhan, &amp; rekap pekan</span>
+                                </div>
+                            </div>
+                            <span class="text-stone-400">&rarr;</span>
+                        </a>
+
+                        <div class="pt-2 border-t border-stone-100 flex items-center gap-2">
+                            <button type="button" 
+                                    @click="rekapModalOpen = true"
+                                    class="flex-1 py-1.5 px-2.5 text-center rounded-lg bg-white hover:bg-stone-50 border border-stone-200 text-stone-700 text-[11px] font-medium transition cursor-pointer">
+                                Rekap Mahasiswa
+                            </button>
+                            <button type="button" 
+                                    @click="settingsModalOpen = true"
+                                    class="flex-1 py-1.5 px-2.5 text-center rounded-lg bg-white hover:bg-stone-50 border border-stone-200 text-stone-700 text-[11px] font-medium transition cursor-pointer">
+                                Rekening Kas
+                            </button>
+                        </div>
                     </div>
                 </div>
 

@@ -46,7 +46,10 @@
                     <div>
                         <span class="text-[11px] font-semibold uppercase tracking-wider text-stone-400">Pekan Berjalan</span>
                         <h3 class="text-lg font-bold text-stone-900 tracking-tight mt-0.5">
-                            {{ $activePeriod->name ?? 'Pekan Aktif' }} (Semester Genap)
+                            {{ $activePeriod->name ?? 'Pekan Kas' }}
+                            @if($activePeriod)
+                                <span class="font-normal text-stone-500 text-sm">({{ $activePeriod->academic_year }} &bull; Semester {{ ucfirst($activePeriod->semester) }})</span>
+                            @endif
                         </h3>
                     </div>
                     @if($currentDue && $currentDue->isPaid())
@@ -81,9 +84,11 @@
                     <div class="bg-stone-50 p-3.5 rounded-lg border border-stone-100">
                         <span class="text-xs text-stone-500 block">Jatuh Tempo Pekan Ini</span>
                         <span class="text-sm font-semibold text-stone-800 mt-2 block">
-                            {{ $activePeriod?->due_date ? $activePeriod->due_date->format('d M Y') : 'Jumat perkuliahan' }}
+                            {{ $activePeriod?->due_date ? $activePeriod->due_date->format('d M Y') : 'Sesuai jadwal' }}
                         </span>
-                        <span class="text-[11px] text-stone-400 block">Setiap Jumat perkuliahan</span>
+                        <span class="text-[11px] text-stone-400 block">
+                            {{ $activePeriod?->due_date ? 'Batas akhir ' . $activePeriod->due_date->translatedFormat('l') : 'Sesuai jadwal perkuliahan' }}
+                        </span>
                     </div>
                 </div>
 
@@ -92,23 +97,52 @@
                         Pembayaran iuran kas Anda untuk {{ $activePeriod->name ?? 'pekan ini' }} telah diverifikasi oleh bendahara kelas. Tidak ada tunggakan berjalan untuk pekan ini.
                     @elseif($currentDue && $currentDue->pendingPayment)
                         Bukti transfer Anda untuk {{ $activePeriod->name ?? 'pekan ini' }} telah masuk ke sistem dan sedang menunggu persetujuan verifikasi oleh bendahara.
+                    @elseif($activePeriod)
+                        Anda belum melunasi iuran kas untuk {{ $activePeriod->name }}. Segera lakukan pembayaran dan kirimkan bukti setoran sebelum batas waktu jatuh tempo.
                     @else
-                        Anda belum melunasi iuran kas untuk {{ $activePeriod->name ?? 'pekan ini' }}. Segera lakukan transfer dan kirimkan bukti pembayaran sebelum batas waktu jatuh tempo.
+                        Belum ada periode kas yang aktif saat ini.
                     @endif
                 </p>
             </div>
 
             <!-- Payment Action CTA -->
             <div class="mt-5 pt-4 border-t border-stone-100 flex flex-col sm:flex-row items-center gap-3">
-                <button type="button" 
-                        @click="paymentModalOpen = true" 
-                        class="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-800 hover:bg-emerald-900 text-white font-semibold text-xs transition shadow-2xs cursor-pointer">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
-                    </svg>
-                    <span>Bayar Kas / Bayar di Muka</span>
-                </button>
-                <div class="text-[11px] text-stone-500 text-center sm:text-left">
+                @if($currentDue && $currentDue->isPaid())
+                    @if($unpaidDues->count() > 0)
+                        <button type="button" 
+                                @click="paymentModalOpen = true" 
+                                class="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-800 hover:bg-emerald-900 text-white font-semibold text-xs transition shadow-2xs cursor-pointer">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                            </svg>
+                            <span>Bayar Iuran Pekan Lain (Tersisa {{ $unpaidDues->count() }} Pekan)</span>
+                        </button>
+                    @else
+                        <div class="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 font-semibold text-xs">
+                            <svg class="w-4 h-4 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                            <span>Seluruh Kewajiban Iuran Semester Ini Telah Lunas</span>
+                        </div>
+                    @endif
+                @elseif($currentDue && $currentDue->pendingPayment)
+                    <div class="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 font-semibold text-xs">
+                        <svg class="w-4 h-4 text-amber-600 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <span>Bukti Pembayaran Pekan Ini Sedang Menunggu Verifikasi Bendahara</span>
+                    </div>
+                @else
+                    <button type="button" 
+                            @click="paymentModalOpen = true" 
+                            class="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-800 hover:bg-emerald-900 text-white font-semibold text-xs transition shadow-2xs cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                        </svg>
+                        <span>Bayar Iuran Pekan Ini Sekarang</span>
+                    </button>
+                @endif
+                <div class="text-[11px] text-stone-500 text-center sm:text-left shrink-0">
                     <span>Rekening Kas: <strong class="text-stone-700 font-mono">BCA 873-019-2819</strong></span>
                 </div>
             </div>
@@ -229,7 +263,7 @@
                                         Iuran Kas {{ $payment->studentDue?->cashPeriod?->name ?? 'Kas' }}
                                     </span>
                                     <span class="text-[11px] text-stone-400">
-                                        Semester Genap 2025/2026
+                                        {{ $payment->studentDue?->cashPeriod ? 'Semester ' . ucfirst($payment->studentDue->cashPeriod->semester) . ' ' . $payment->studentDue->cashPeriod->academic_year : 'Iuran Kas Mahasiswa' }}
                                     </span>
                                 </td>
                                 <td class="py-3.5 px-4 text-stone-700 whitespace-nowrap">

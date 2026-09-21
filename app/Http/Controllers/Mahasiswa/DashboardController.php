@@ -51,7 +51,7 @@ class DashboardController extends Controller
         $paidWeeksCount = StudentDue::where('user_id', $user->id)
             ->where('status', 'paid')
             ->count();
-        $totalWeeksCount = max($allPeriods->count(), 16);
+        $totalWeeksCount = $allPeriods->count();
         $progressPercent = $totalWeeksCount > 0 ? round(($paidWeeksCount / $totalWeeksCount) * 100, 1) : 0;
 
         $totalPaidAmount = Payment::whereHas('studentDue', fn($q) => $q->where('user_id', $user->id))

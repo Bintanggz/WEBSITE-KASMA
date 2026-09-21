@@ -7,6 +7,7 @@ use App\Http\Controllers\Bendahara\DashboardController as BendaharaDashboardCont
 use App\Http\Controllers\Bendahara\ExpenseController;
 use App\Http\Controllers\Bendahara\FinancialTransactionController;
 use App\Http\Controllers\Bendahara\PaymentVerificationController;
+use App\Http\Controllers\Bendahara\ReportController;
 use App\Http\Controllers\Mahasiswa\DashboardController as MahasiswaDashboardController;
 use App\Http\Controllers\Mahasiswa\FinancialTransparencyController;
 use App\Http\Controllers\Mahasiswa\PaymentController;
@@ -104,4 +105,7 @@ Route::middleware(['auth', 'role:bendahara'])
         Route::put('/transaksi/{transaction}', [FinancialTransactionController::class, 'update'])->name('transaksi.update');
         Route::delete('/transaksi/{transaction}', [FinancialTransactionController::class, 'destroy'])->name('transaksi.destroy');
         Route::post('/transactions/expense', [ExpenseController::class, 'store'])->name('transactions.expense.store');
+
+        // Reports / Laporan
+        Route::get('/laporan', [ReportController::class, 'index'])->name('laporan.index');
     });

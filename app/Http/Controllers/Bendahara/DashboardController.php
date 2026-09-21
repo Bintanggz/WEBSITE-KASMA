@@ -25,8 +25,10 @@ class DashboardController extends Controller
         $activePeriod = CashPeriod::where('is_active', true)->first()
             ?? CashPeriod::orderBy('week_number')->first();
 
-        // 2. Class cash balance
+        // 2. Class cash ledger balance and totals
         $currentBalance = FinancialTransaction::currentBalance();
+        $totalIncome = (float) FinancialTransaction::income()->sum('amount');
+        $totalExpense = (float) FinancialTransaction::expense()->sum('amount');
 
         // 3. Weekly collection progress for active period
         $totalStudentsCount = User::where('role', 'mahasiswa')->where('is_active', true)->count();
@@ -89,6 +91,8 @@ class DashboardController extends Controller
             'user',
             'activePeriod',
             'currentBalance',
+            'totalIncome',
+            'totalExpense',
             'totalStudentsCount',
             'activePeriodPaidCount',
             'activePeriodTargetAmount',
