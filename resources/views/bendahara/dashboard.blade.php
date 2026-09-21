@@ -8,7 +8,6 @@
         rejectModalOpen: false,
         rejectData: { id: null, name: '' },
         settingsModalOpen: false,
-        rekapModalOpen: false,
         broadcastCopied: false,
         selectedStudentId: '{{ $studentsWithUnpaidDues->first()?->id ?? '' }}',
         studentsData: {{ Js::from($studentsWithUnpaidDues) }},
@@ -38,12 +37,12 @@
                 <div>
                     <div class="flex items-center gap-2">
                         <h2 class="text-xl font-bold text-stone-900 tracking-tight">Panel Pengelolaan Kas &bull; Bendahara</h2>
-                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-amber-50 text-amber-900 border border-amber-200/70">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-amber-50 text-amber-900 border border-amber-200/70">
                             {{ $activePeriod->name ?? 'Pekan Aktif' }} Aktif
                         </span>
                     </div>
                     <p class="text-xs sm:text-sm text-stone-500 mt-0.5">
-                        Kelas TI-3A &bull; Pengelola: <span class="font-medium text-stone-700">{{ $user->name }} (Bendahara 1)</span>
+                        Kelas TI-3A &bull; Pengelola: <span class="font-medium text-stone-700">{{ $user->name }} (Bendahara)</span>
                     </p>
                 </div>
 
@@ -51,7 +50,7 @@
                 <div class="flex flex-wrap items-center gap-2">
                     <button type="button" 
                             @click="expenseModalOpen = true"
-                            class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg text-white bg-stone-900 hover:bg-stone-800 transition shadow-2xs cursor-pointer">
+                            class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg text-white bg-stone-900 hover:bg-stone-800 transition shadow-2xs cursor-pointer">
                         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                         </svg>
@@ -59,7 +58,7 @@
                     </button>
                     <button type="button" 
                             @click="cashModalOpen = true"
-                            class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition shadow-2xs cursor-pointer">
+                            class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg text-stone-700 bg-white border border-stone-200 hover:bg-stone-50 transition shadow-2xs cursor-pointer">
                         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
@@ -68,33 +67,38 @@
                 </div>
             </div>
 
-            <!-- Pending Alert Notice -->
+            <!-- Priority Alert: Pending Payments -->
             @if($pendingPaymentsCount > 0)
-            <div class="mt-3 p-3 rounded-lg bg-amber-50/80 border border-amber-200 text-amber-950 flex items-center justify-between text-xs">
-                <div class="flex items-center gap-2">
-                    <svg class="w-4 h-4 text-amber-700 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                    </svg>
-                    <span>Ada <strong>{{ $pendingPaymentsCount }} bukti transfer masuk</strong> (Rp {{ number_format($pendingPaymentsAmount, 0, ',', '.') }}) yang perlu dicek dan disetujui.</span>
+            <div class="mt-4 p-3.5 rounded-xl bg-amber-50/90 border border-amber-200 text-amber-950 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs shadow-2xs">
+                <div class="flex items-center gap-2.5">
+                    <span class="flex h-2 w-2 relative shrink-0">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                    </span>
+                    <span>Ada <strong>{{ $pendingPaymentsCount }} bukti transfer masuk</strong> senilai <strong>Rp {{ number_format($pendingPaymentsAmount, 0, ',', '.') }}</strong> yang menunggu persetujuan Anda.</span>
                 </div>
-                <a href="#verifikasi-pembayaran" class="font-semibold underline hover:text-amber-900 shrink-0 ml-2">Tinjau Sekarang &rarr;</a>
+                <a href="#verifikasi-pembayaran" class="font-semibold text-amber-900 underline hover:text-amber-950 shrink-0 self-start sm:self-auto">
+                    Tinjau Antrean Sekarang &rarr;
+                </a>
             </div>
             @endif
         </div>
 
-        <!-- Top Focus Metrics: 1. Current Balance & 2. Weekly Collection -->
+        <!-- 4 Primary Focus Cards: Balance Priority & Key Weekly Status -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             
-            <!-- Focus 1: Current Cash Balance, Total Income & Total Expenses -->
-            <div class="bg-white p-5 rounded-xl border border-stone-200/90 shadow-2xs">
-                <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold text-stone-500 uppercase tracking-wider">Saldo Kas Riil (Buku Besar)</span>
-                    <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/60">Aktif</span>
-                </div>
-                <div class="mt-2.5">
-                    <span class="text-2xl sm:text-3xl font-bold font-mono {{ $currentBalance >= 0 ? 'text-stone-900' : 'text-rose-600' }}">
-                        Rp {{ number_format($currentBalance, 0, ',', '.') }}
-                    </span>
+            <!-- Focus 1: Current Cash Balance (Highest Priority) -->
+            <div class="bg-white p-5 rounded-xl border border-stone-200/90 shadow-2xs flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-stone-500 uppercase tracking-wider">Saldo Kas Riil (Buku Besar)</span>
+                        <span class="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/60">Aktif</span>
+                    </div>
+                    <div class="mt-2.5">
+                        <span class="text-2xl sm:text-3xl font-bold font-mono {{ $currentBalance >= 0 ? 'text-stone-900' : 'text-rose-600' }}">
+                            Rp {{ number_format($currentBalance, 0, ',', '.') }}
+                        </span>
+                    </div>
                 </div>
                 <div class="mt-3 pt-2.5 border-t border-stone-100 flex items-center justify-between text-[11px]">
                     <span class="text-emerald-700 font-medium font-mono" title="Total Pemasukan Kas">+Rp {{ number_format($totalIncome, 0, ',', '.') }}</span>
@@ -103,17 +107,19 @@
             </div>
 
             <!-- Focus 2: Weekly Collection (Active Period) -->
-            <div id="iuran-mingguan" class="bg-white p-5 rounded-xl border border-stone-200/90 shadow-2xs">
-                <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold text-stone-500 uppercase tracking-wider">Iuran {{ $activePeriod->name ?? 'Pekan Ini' }} Terkumpul</span>
-                    <span class="text-[11px] font-mono text-stone-700 font-semibold bg-stone-100 px-1.5 py-0.5 rounded">
-                        {{ $activePeriodPercentage }}%
-                    </span>
-                </div>
-                <div class="mt-2.5">
-                    <span class="text-2xl sm:text-3xl font-bold font-mono text-stone-900">
-                        Rp {{ number_format($activePeriodCollectedAmount, 0, ',', '.') }}
-                    </span>
+            <div id="iuran-mingguan" class="bg-white p-5 rounded-xl border border-stone-200/90 shadow-2xs flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-stone-500 uppercase tracking-wider">Iuran {{ $activePeriod->name ?? 'Pekan Ini' }} Terkumpul</span>
+                        <span class="text-[11px] font-mono text-stone-700 font-semibold bg-stone-100 px-1.5 py-0.5 rounded">
+                            {{ $activePeriodPercentage }}%
+                        </span>
+                    </div>
+                    <div class="mt-2.5">
+                        <span class="text-2xl sm:text-3xl font-bold font-mono text-stone-900">
+                            Rp {{ number_format($activePeriodCollectedAmount, 0, ',', '.') }}
+                        </span>
+                    </div>
                 </div>
                 <div class="mt-3 pt-2.5 border-t border-stone-100 flex items-center justify-between text-[11px] text-stone-500">
                     <span>{{ $activePeriodPaidCount }} dari {{ $totalStudentsCount }} Mahasiswa Lunas</span>
@@ -121,32 +127,38 @@
                 </div>
             </div>
 
-            <!-- Focus 3 Metric: Pending Payments -->
-            <div class="bg-white p-5 rounded-xl border border-stone-200/90 shadow-2xs">
-                <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold text-stone-500 uppercase tracking-wider">Menunggu Verifikasi</span>
-                    <span class="w-2 h-2 rounded-full {{ $pendingPaymentsCount > 0 ? 'bg-amber-500' : 'bg-stone-300' }}"></span>
-                </div>
-                <div class="mt-2.5 flex items-baseline gap-2">
-                    <span class="text-2xl sm:text-3xl font-bold font-mono text-amber-900">{{ $pendingPaymentsCount }} Bukti</span>
-                    <span class="text-xs text-stone-500 font-mono">(Rp {{ number_format($pendingPaymentsAmount, 0, ',', '.') }})</span>
+            <!-- Focus 3: Pending Payments Queue -->
+            <div class="bg-white p-5 rounded-xl border border-stone-200/90 shadow-2xs flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-stone-500 uppercase tracking-wider">Menunggu Verifikasi</span>
+                        <span class="w-2 h-2 rounded-full {{ $pendingPaymentsCount > 0 ? 'bg-amber-500' : 'bg-stone-300' }}"></span>
+                    </div>
+                    <div class="mt-2.5 flex items-baseline gap-2">
+                        <span class="text-2xl sm:text-3xl font-bold font-mono {{ $pendingPaymentsCount > 0 ? 'text-amber-900' : 'text-stone-900' }}">
+                            {{ $pendingPaymentsCount }} Bukti
+                        </span>
+                        <span class="text-xs text-stone-500 font-mono">(Rp {{ number_format($pendingPaymentsAmount, 0, ',', '.') }})</span>
+                    </div>
                 </div>
                 <div class="mt-3 pt-2.5 border-t border-stone-100 flex items-center justify-between text-[11px] text-stone-500">
-                    <span>Setoran Transfer &amp; QRIS</span>
+                    <span>Transfer BCA &amp; QRIS</span>
                     <a href="{{ route('bendahara.verifikasi.index') }}" class="text-amber-800 font-semibold hover:underline">Periksa &rarr;</a>
                 </div>
             </div>
 
-            <!-- Focus 4 Metric: Unpaid Students Count -->
-            <div class="bg-white p-5 rounded-xl border border-stone-200/90 shadow-2xs">
-                <div class="flex items-center justify-between">
-                    <span class="text-xs font-semibold text-stone-500 uppercase tracking-wider">Belum Bayar Pekan Ini</span>
-                    <span class="text-[10px] font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">
-                        {{ $unpaidCount }} Mahasiswa
-                    </span>
-                </div>
-                <div class="mt-2.5">
-                    <span class="text-2xl sm:text-3xl font-bold font-mono text-stone-900">{{ $unpaidCount }} Orang</span>
+            <!-- Focus 4: Unpaid Students This Week -->
+            <div class="bg-white p-5 rounded-xl border border-stone-200/90 shadow-2xs flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-semibold text-stone-500 uppercase tracking-wider">Belum Bayar Pekan Ini</span>
+                        <span class="text-[10px] font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">
+                            {{ $unpaidCount }} Mahasiswa
+                        </span>
+                    </div>
+                    <div class="mt-2.5">
+                        <span class="text-2xl sm:text-3xl font-bold font-mono text-stone-900">{{ $unpaidCount }} Orang</span>
+                    </div>
                 </div>
                 <div class="mt-3 pt-2.5 border-t border-stone-100 flex items-center justify-between text-[11px] text-stone-500">
                     <span>Tunggakan: Rp {{ number_format($unpaidAmount, 0, ',', '.') }}</span>
@@ -156,15 +168,14 @@
 
         </div>
 
-        <!-- Main Grid: Left Column (Transactions & Unpaid Students) & Right Column (Verification Queue & Quick Actions) -->
+        <!-- Main Workspace Grid: Left Column (Transactions & Unpaid List) & Right Column (Verification & Quick Actions) -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
             
             <!-- Left Column: Transactions & Unpaid Students (lg:col-span-7) -->
             <div class="lg:col-span-7 space-y-6">
                 
-                <!-- Focus 4: Unpaid Students List (Daftar Mahasiswa Belum Bayar) -->
+                <!-- Unpaid Students List -->
                 <div id="mahasiswa-belum-bayar" class="bg-white rounded-xl border border-stone-200/90 shadow-2xs overflow-hidden">
-                    <span id="mahasiswa-kelas" class="sr-only"></span>
                     <div class="p-5 border-b border-stone-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                         <div>
                             <div class="flex items-center gap-2">
@@ -174,20 +185,23 @@
                                 </h3>
                             </div>
                             <p class="text-xs text-stone-500 mt-0.5">
-                                {{ $unpaidCount }} mahasiswa belum melunasi kas sebelum jatuh tempo {{ $activePeriod?->due_date ? $activePeriod->due_date->format('l, d M Y') : 'Jumat' }}
+                                {{ $unpaidCount }} mahasiswa belum melunasi kas sebelum batas jatuh tempo {{ $activePeriod?->due_date ? $activePeriod->due_date->translatedFormat('l, d M Y') : 'Jumat' }}
                             </p>
                         </div>
+                        
+                        @if($unpaidCount > 0)
                         <button type="button" 
                                 @click="broadcastModalOpen = true"
-                                class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100 transition self-start sm:self-auto cursor-pointer">
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100 transition self-start sm:self-auto cursor-pointer">
                             <svg class="w-3.5 h-3.5 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                             </svg>
-                            <span>Ingatkan Semua via WA</span>
+                            <span>Salin Pesan WA Kelas</span>
                         </button>
+                        @endif
                     </div>
 
-                    <div class="divide-y divide-stone-100 text-xs">
+                    <div class="divide-y divide-stone-100 text-xs max-h-80 overflow-y-auto">
                         @forelse($unpaidStudents as $index => $due)
                             @php
                                 $student = $due->user;
@@ -202,7 +216,7 @@
                                     <div>
                                         <p class="font-semibold text-stone-900">{{ $student->name }}</p>
                                         <p class="text-[11px] font-mono text-stone-400">
-                                            NIM: {{ $student->nim ?? '-' }} &bull; Tunggakan: 1 Pekan
+                                            NIM: {{ $student->nim ?? '-' }} &bull; Belum Lunas
                                         </p>
                                     </div>
                                 </div>
@@ -213,20 +227,23 @@
                                     <a href="https://wa.me/{{ $cleanPhone }}?text={{ urlencode($reminderMsg) }}" 
                                        target="_blank" 
                                        rel="noopener noreferrer" 
-                                       class="text-[11px] px-2 py-1 rounded bg-stone-100 hover:bg-emerald-50 hover:text-emerald-800 text-stone-600 transition font-medium cursor-pointer">
+                                       class="text-[11px] px-2.5 py-1 rounded bg-stone-100 hover:bg-emerald-50 hover:text-emerald-800 text-stone-700 transition font-medium cursor-pointer">
                                         Ingatkan WA
                                     </a>
                                 </div>
                             </div>
                         @empty
-                            <div class="p-6 text-center text-stone-400 text-xs">
-                                Luar biasa! Seluruh mahasiswa telah melunasi iuran kas untuk pekan ini.
+                            <div class="p-8 text-center text-stone-400 text-xs">
+                                <svg class="w-8 h-8 mx-auto text-emerald-500 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Seluruh mahasiswa telah melunasi iuran kas untuk pekan ini.
                             </div>
                         @endforelse
                     </div>
                 </div>
 
-                <!-- Focus 5: Recent Transactions (Catatan Transaksi Kas Terkini) -->
+                <!-- Recent Transactions (Ledger Excerpt) -->
                 <div id="transaksi-kas" class="bg-white rounded-xl border border-stone-200/90 shadow-2xs overflow-hidden">
                     <div class="p-5 border-b border-stone-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                         <div>
@@ -306,7 +323,7 @@
                                                             proof_url: '{{ $receiptUrl }}',
                                                             is_pending: false
                                                         })"
-                                                        class="text-[11px] text-stone-500 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 px-2 py-1 rounded transition cursor-pointer">
+                                                        class="text-[11px] text-stone-600 hover:text-stone-900 bg-stone-100 hover:bg-stone-200 px-2 py-1 rounded transition cursor-pointer">
                                                     Lihat
                                                 </button>
                                             @else
@@ -325,20 +342,20 @@
                         </table>
                     </div>
 
-                    <div class="p-3 bg-stone-50 border-t border-stone-100 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-stone-500 px-5">
-                        <span>Menampilkan riwayat mutasi kas kelas &bull; Transparan &amp; Akuntabel</span>
+                    <div class="p-3.5 bg-stone-50 border-t border-stone-100 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-stone-500 px-5">
+                        <span>Menampilkan mutasi kas kelas terbaru</span>
                         <a href="{{ route('bendahara.transaksi.index') }}" class="font-semibold text-stone-800 hover:text-stone-950 underline">
-                            Kelola &amp; Pembukuan Lengkap &rarr;
+                            Buka Buku Transaksi Lengkap &rarr;
                         </a>
                     </div>
                 </div>
 
             </div>
 
-            <!-- Right Column: Focus 3. Pending Payments Verification Queue & Focus 6. Quick Actions (lg:col-span-5) -->
+            <!-- Right Column: Verification Queue & Quick Management (lg:col-span-5) -->
             <div class="lg:col-span-5 space-y-6">
                 
-                <!-- Focus 3: Pending Payments Verification Queue (Verifikasi Pembayaran) -->
+                <!-- Pending Payments Verification Queue -->
                 <div id="verifikasi-pembayaran" class="bg-white rounded-xl border border-stone-200/90 shadow-2xs p-5">
                     <div class="flex items-center justify-between pb-3 mb-4 border-b border-stone-100">
                         <div class="flex items-center gap-2">
@@ -415,11 +432,13 @@
                     </div>
 
                     <div class="mt-4 pt-3 border-t border-stone-100 text-center">
-                        <span class="text-[11px] text-stone-400">Hanya setoran yang disetujui yang menambah saldo kas kelas.</span>
+                        <a href="{{ route('bendahara.verifikasi.index') }}" class="text-xs font-semibold text-stone-700 hover:text-stone-900 underline">
+                            Buka Halaman Verifikasi Selengkapnya &rarr;
+                        </a>
                     </div>
                 </div>
 
-                <!-- Focus 6: Quick Management & Module Links -->
+                <!-- Quick Management & Module Links -->
                 <div id="laporan-keuangan" class="bg-white p-5 rounded-xl border border-stone-200/90 shadow-2xs">
                     <h4 class="font-semibold text-stone-900 text-sm mb-3">Akses Cepat &amp; Navigasi Modul</h4>
                     <div class="space-y-2 text-xs">
@@ -493,16 +512,11 @@
                             <span class="text-stone-400">&rarr;</span>
                         </a>
 
-                        <div class="pt-2 border-t border-stone-100 flex items-center gap-2">
-                            <button type="button" 
-                                    @click="rekapModalOpen = true"
-                                    class="flex-1 py-1.5 px-2.5 text-center rounded-lg bg-white hover:bg-stone-50 border border-stone-200 text-stone-700 text-[11px] font-medium transition cursor-pointer">
-                                Rekap Mahasiswa
-                            </button>
+                        <div class="pt-2 border-t border-stone-100">
                             <button type="button" 
                                     @click="settingsModalOpen = true"
-                                    class="flex-1 py-1.5 px-2.5 text-center rounded-lg bg-white hover:bg-stone-50 border border-stone-200 text-stone-700 text-[11px] font-medium transition cursor-pointer">
-                                Rekening Kas
+                                    class="w-full py-2 px-3 text-center rounded-lg bg-white hover:bg-stone-50 border border-stone-200 text-stone-700 text-xs font-medium transition cursor-pointer">
+                                Lihat Info Rekening Kas Resmi
                             </button>
                         </div>
                     </div>
@@ -524,7 +538,7 @@
                         <span class="w-2 h-2 rounded-full bg-stone-800"></span>
                         <h3 class="font-semibold text-stone-900 text-sm">Catat Pengeluaran Kas Kelas</h3>
                     </div>
-                    <button type="button" @click="expenseModalOpen = false" class="text-stone-400 hover:text-stone-600">
+                    <button type="button" @click="expenseModalOpen = false" class="text-stone-400 hover:text-stone-600 cursor-pointer">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -588,7 +602,7 @@
                         <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
                         <h3 class="font-semibold text-stone-900 text-sm">Catat Setoran Tunai Langsung di Kelas</h3>
                     </div>
-                    <button type="button" @click="cashModalOpen = false" class="text-stone-400 hover:text-stone-600">
+                    <button type="button" @click="cashModalOpen = false" class="text-stone-400 hover:text-stone-600 cursor-pointer">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -619,7 +633,7 @@
                     <div class="p-3 bg-emerald-50/70 border border-emerald-200 rounded-lg text-emerald-950">
                         <p class="font-semibold text-[11px] uppercase tracking-wider text-emerald-800">Verifikasi Langsung</p>
                         <p class="text-[11px] text-emerald-800/90 pt-0.5">
-                            Setoran tunai akan otomatis diverifikasi sebagai lunas dan langsung menambah saldo kas kelas.
+                            Setoran tunai otomatis berstatus lunas dan langsung menambah saldo kas kelas.
                         </p>
                     </div>
 
@@ -652,7 +666,7 @@
                         <span class="w-2 h-2 rounded-full bg-rose-600"></span>
                         <h3 class="font-semibold text-stone-900 text-sm" x-text="'Tolak Pembayaran - ' + rejectData.name"></h3>
                     </div>
-                    <button type="button" @click="rejectModalOpen = false" class="text-stone-400 hover:text-stone-600">
+                    <button type="button" @click="rejectModalOpen = false" class="text-stone-400 hover:text-stone-600 cursor-pointer">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -691,7 +705,7 @@
                         <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
                         <h3 class="font-semibold text-stone-900 text-sm">Pesan Siaran Pengingat Kas Kelas</h3>
                     </div>
-                    <button type="button" @click="broadcastModalOpen = false" class="text-stone-400 hover:text-stone-600">
+                    <button type="button" @click="broadcastModalOpen = false" class="text-stone-400 hover:text-stone-600 cursor-pointer">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -700,7 +714,7 @@
 
                 @php
                     $unpaidNames = $unpaidStudents->map(fn($d) => "- " . $d->user->name)->join("\n");
-                    $broadcastText = "[PENGINGAT IURAN KAS KELAS TI-3A]\n\nHalo rekan-rekan, mengingatkan kembali untuk iuran kas " . ($activePeriod->name ?? 'Pekan Ini') . " (Rp 10.000 / pekan).\n\nBatas jatuh tempo: " . ($activePeriod?->due_date ? $activePeriod->due_date->format('l, d M Y') : 'Jumat') . "\nRekening Kas: BCA 873-019-2819 a.n Bendahara Kas TI-3A.\n\nDaftar rekan yang belum lunas:\n" . ($unpaidNames ?: '- Semua lunas!') . "\n\nMohon segera melunasi dan mengunggah bukti di KASMA. Terima kasih!";
+                    $broadcastText = "[PENGINGAT IURAN KAS KELAS TI-3A]\n\nHalo rekan-rekan, mengingatkan kembali untuk iuran kas " . ($activePeriod->name ?? 'Pekan Ini') . " (Rp 10.000 / pekan).\n\nBatas jatuh tempo: " . ($activePeriod?->due_date ? $activePeriod->due_date->translatedFormat('l, d M Y') : 'Jumat') . "\nRekening Kas: BCA 873-019-2819 a.n Bendahara Kas TI-3A.\n\nDaftar rekan yang belum lunas:\n" . ($unpaidNames ?: '- Semua lunas!') . "\n\nMohon segera melunasi dan mengunggah bukti di KASMA. Terima kasih!";
                 @endphp
 
                 <div class="mt-4 space-y-3 text-xs">
@@ -731,9 +745,9 @@
                 <div class="flex items-center justify-between pb-3 border-b border-stone-100">
                     <div class="flex items-center space-x-2">
                         <span class="w-2 h-2 rounded-full bg-stone-800"></span>
-                        <h3 class="font-semibold text-stone-900 text-sm">Informasi Parameter Kas & Rekening</h3>
+                        <h3 class="font-semibold text-stone-900 text-sm">Informasi Parameter Kas &amp; Rekening</h3>
                     </div>
-                    <button type="button" @click="settingsModalOpen = false" class="text-stone-400 hover:text-stone-600">
+                    <button type="button" @click="settingsModalOpen = false" class="text-stone-400 hover:text-stone-600 cursor-pointer">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -767,7 +781,7 @@
                     </div>
 
                     <p class="text-[11px] text-stone-400">
-                        Parameter periode semester dan nominal kas diinisialisasi pada awal semester oleh bendahara kelas.
+                        Parameter periode semester dan nominal kas diatur pada modul Iuran Kas oleh bendahara kelas.
                     </p>
 
                     <div class="pt-2">
@@ -775,55 +789,6 @@
                             Tutup
                         </button>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- MODAL: Rekap Status Seluruh Siswa -->
-        <div x-show="rekapModalOpen" 
-             x-cloak 
-             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/40"
-             @keydown.escape.window="rekapModalOpen = false">
-            <div class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-stone-200 max-h-[85vh] flex flex-col" 
-                 @click.away="rekapModalOpen = false">
-                <div class="flex items-center justify-between pb-3 border-b border-stone-100 shrink-0">
-                    <div>
-                        <h3 class="font-semibold text-stone-900 text-sm">Rekap Status Pelunasan Kas Mahasiswa</h3>
-                        <p class="text-[11px] text-stone-500">Kelas TI-3A &bull; Total {{ $totalStudentsCount }} Mahasiswa</p>
-                    </div>
-                    <button type="button" @click="rekapModalOpen = false" class="text-stone-400 hover:text-stone-600">
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-
-                <div class="mt-3 overflow-y-auto divide-y divide-stone-100 text-xs flex-1">
-                    @foreach($allActiveStudents as $idx => $student)
-                        <div class="py-2.5 px-2 flex items-center justify-between hover:bg-stone-50">
-                            <div class="flex items-center gap-2.5">
-                                <span class="font-mono text-stone-400 text-[11px] w-5 text-right">{{ $idx + 1 }}.</span>
-                                <div>
-                                    <p class="font-medium text-stone-900">{{ $student->name }}</p>
-                                    <p class="text-[10px] font-mono text-stone-400">NIM: {{ $student->nim ?? '-' }}</p>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <span class="text-[11px] font-mono font-semibold {{ $student->unpaid_dues_count == 0 ? 'text-emerald-800' : 'text-stone-700' }}">
-                                    {{ $student->paid_dues_count }} / 16 Pekan
-                                </span>
-                                <span class="block text-[10px] {{ $student->unpaid_dues_count == 0 ? 'text-emerald-700' : 'text-rose-700' }}">
-                                    {{ $student->unpaid_dues_count == 0 ? 'Lunas Penuh' : $student->unpaid_dues_count . ' Sisa Pekan' }}
-                                </span>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-
-                <div class="pt-3 border-t border-stone-100 shrink-0">
-                    <button type="button" @click="rekapModalOpen = false" class="w-full py-2 px-3 text-xs font-medium rounded-lg text-stone-700 bg-stone-100 hover:bg-stone-200 transition cursor-pointer">
-                        Tutup
-                    </button>
                 </div>
             </div>
         </div>

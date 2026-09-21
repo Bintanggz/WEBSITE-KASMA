@@ -25,9 +25,14 @@
                     <h1 class="text-base sm:text-lg font-semibold text-stone-900 tracking-tight">
                         {{ $role === 'bendahara' ? 'Dashboard Bendahara' : 'Dashboard Mahasiswa' }}
                     </h1>
-                    <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-stone-100 text-stone-600 border border-stone-200">
-                        Semester Genap 2025/2026
+                    @php
+                        $activePeriodForTopbar = \App\Models\CashPeriod::where('is_active', true)->first();
+                    @endphp
+                    @if($activePeriodForTopbar)
+                    <span class="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded text-[11px] font-medium bg-stone-100 text-stone-600 border border-stone-200">
+                        {{ $activePeriodForTopbar->academic_year }} &bull; Semester {{ ucfirst($activePeriodForTopbar->semester) }}
                     </span>
+                    @endif
                 </div>
                 <p class="text-xs text-stone-500 hidden sm:block">
                     {{ $role === 'bendahara' ? 'Kelola kas kelas TI-3A & verifikasi pembayaran' : 'Informasi iuran kas & keuangan kelas TI-3A' }}

@@ -115,12 +115,6 @@
                     </svg>
                     <span>Transaksi</span>
                 </a>
-                <a href="/bendahara/dashboard#mahasiswa-kelas" @click="mobileMenuOpen = false" class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-stone-600 hover:bg-stone-50">
-                    <svg class="w-4 h-4 text-stone-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                    </svg>
-                    <span>Data Mahasiswa</span>
-                </a>
                 <a href="{{ route('bendahara.laporan.index') }}" @click="mobileMenuOpen = false" class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg {{ request()->routeIs('bendahara.laporan.*') ? 'bg-stone-100 text-stone-900 font-semibold' : 'text-stone-600 hover:bg-stone-50' }}">
                     <svg class="w-4 h-4 {{ request()->routeIs('bendahara.laporan.*') ? 'text-stone-700' : 'text-stone-400' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
@@ -150,7 +144,7 @@
     </div>
 
     <!-- Mobile Bottom Navigation Bar (Tailored per role) -->
-    <nav class="md:hidden fixed bottom-0 inset-x-0 z-30 bg-white/95 border-t border-stone-200 py-2 px-4 flex justify-around items-center">
+    <nav class="md:hidden fixed bottom-0 inset-x-0 z-30 bg-white/95 border-t border-stone-200 py-2 px-2 sm:px-4 flex justify-around items-center">
         @if($role === 'mahasiswa')
         <a href="/mahasiswa/dashboard" class="flex flex-col items-center gap-1 {{ request()->routeIs('mahasiswa.dashboard') ? 'text-stone-900 font-semibold' : 'text-stone-500 hover:text-stone-900' }}">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -203,6 +197,12 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
             </svg>
             <span class="text-[10px] font-medium leading-none">Transaksi</span>
+        </a>
+        <a href="{{ route('bendahara.laporan.index') }}" class="flex flex-col items-center gap-1 {{ request()->routeIs('bendahara.laporan.*') ? 'text-stone-900 font-semibold' : 'text-stone-500 hover:text-stone-900' }}">
+            <svg class="w-5 h-5 {{ request()->routeIs('bendahara.laporan.*') ? 'text-stone-900' : 'text-stone-400' }}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+            <span class="text-[10px] font-medium leading-none">Laporan</span>
         </a>
         @endif
     </nav>
