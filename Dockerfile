@@ -7,8 +7,12 @@ RUN apk --no-cache add postgresql-dev \
 # Copy project files
 COPY . .
 
-# Set writable permissions for storage and bootstrap cache
-RUN chmod -R 777 storage bootstrap/cache
+# Install composer dependencies during build
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
+
+# Ensure scripts and storage permissions
+RUN chmod +x scripts/*.sh \
+    && chmod -R 777 storage bootstrap/cache
 
 # Set environment
 ENV SKIP_COMPOSER 1

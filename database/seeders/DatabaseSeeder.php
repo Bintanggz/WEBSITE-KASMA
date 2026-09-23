@@ -21,6 +21,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Prevent duplicate seeding if data already exists
+        if (User::where('email', 'bendahara@kasma.edu')->exists()) {
+            return;
+        }
+
         // 1. Create Bendahara
         $bendahara = User::create([
             'name' => 'Nadya Putri',

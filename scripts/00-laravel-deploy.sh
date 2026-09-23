@@ -1,22 +1,31 @@
 #!/usr/bin/env bash
-echo "Running Laravel deploy script..."
+set -e
 
-echo "Ensuring storage permissions..."
+cd /var/www/html
+
+echo "--- 1. Ensuring permissions ---"
 chmod -R 777 storage bootstrap/cache
 
-echo "Installing composer dependencies..."
-composer install --no-dev --optimize-autoloader
+echo "--- 2. Discovering packages ---"
+php artisan package:discover --ansi || true
 
-echo "Creating storage symlink..."
+echo "--- 3. Creating storage symlink ---"
 php artisan storage:link || true
 
-echo "Caching config, routes, and views..."
+echo "--- 4. Clearing cache before migrations ---"
+php artisan config:clear || true
+php artisan cache:clear || true
+
+echo "--- 5. Running database migrations ---"
+php artisan migrate --force
+
+echo "--- 6. Seeding database if empty ---"
+php artisan db:seed --force
+
+echo "--- 7. Caching config, routes, and views ---"
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
 
-echo "Running migrations..."
-php artisan migrate --force
+echo "--- KASMA deployment script finished successfully! ---"
 
-echo "Seeding initial accounts if not seeded..."
-php artisan db:seed --force
