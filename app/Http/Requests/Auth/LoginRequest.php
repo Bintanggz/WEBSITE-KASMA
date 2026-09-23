@@ -52,13 +52,29 @@ class LoginRequest extends FormRequest
         if (! Auth::attempt($credentials, $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
+            $potentialUser = \App\Models\User::where($fieldType, $loginInput)->first();
+            if ($potentialUser && ! $potentialUser->isActivated()) {
+                throw ValidationException::withMessages([
+                    'login' => __('Akun Anda belum diaktifkan. Silakan gunakan tautan aktivasi dari bendahara untuk membuat kata sandi Anda.'),
+                ]);
+            }
+
             throw ValidationException::withMessages([
                 'login' => __('Email/NIM atau kata sandi yang Anda masukkan salah.'),
             ]);
         }
 
-        // Verify that the authenticated account is active
+        // Verify that the authenticated account is activated and active
         $user = Auth::user();
+        if (! $user->isActivated()) {
+            Auth::logout();
+            RateLimiter::hit($this->throttleKey());
+
+            throw ValidationException::withMessages([
+                'login' => __('Akun Anda belum diaktifkan. Silakan gunakan tautan aktivasi dari bendahara untuk membuat kata sandi Anda.'),
+            ]);
+        }
+
         if (! $user->is_active) {
             Auth::logout();
             RateLimiter::hit($this->throttleKey());

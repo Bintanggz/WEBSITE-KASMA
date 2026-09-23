@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Auth\AccountActivationController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Bendahara\CashPaymentController;
 use App\Http\Controllers\Bendahara\CashPeriodController;
@@ -8,6 +9,7 @@ use App\Http\Controllers\Bendahara\ExpenseController;
 use App\Http\Controllers\Bendahara\FinancialTransactionController;
 use App\Http\Controllers\Bendahara\PaymentVerificationController;
 use App\Http\Controllers\Bendahara\ReportController;
+use App\Http\Controllers\Bendahara\StudentManagementController;
 use App\Http\Controllers\Mahasiswa\DashboardController as MahasiswaDashboardController;
 use App\Http\Controllers\Mahasiswa\FinancialTransparencyController;
 use App\Http\Controllers\Mahasiswa\PaymentController;
@@ -38,6 +40,10 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('/login', [AuthenticatedSessionController::class, 'store']);
 });
+
+// Student Self-Activation Routes (Public with token verification)
+Route::get('/aktivasi/{token}', [AccountActivationController::class, 'show'])->name('activation.show');
+Route::post('/aktivasi/{token}', [AccountActivationController::class, 'activate'])->name('activation.store');
 
 /*
 |--------------------------------------------------------------------------
@@ -105,6 +111,13 @@ Route::middleware(['auth', 'role:bendahara'])
         Route::put('/transaksi/{transaction}', [FinancialTransactionController::class, 'update'])->name('transaksi.update');
         Route::delete('/transaksi/{transaction}', [FinancialTransactionController::class, 'destroy'])->name('transaksi.destroy');
         Route::post('/transactions/expense', [ExpenseController::class, 'store'])->name('transactions.expense.store');
+
+        // Student Management / Data Mahasiswa
+        Route::get('/mahasiswa', [StudentManagementController::class, 'index'])->name('mahasiswa.index');
+        Route::post('/mahasiswa', [StudentManagementController::class, 'store'])->name('mahasiswa.store');
+        Route::put('/mahasiswa/{mahasiswa}', [StudentManagementController::class, 'update'])->name('mahasiswa.update');
+        Route::patch('/mahasiswa/{mahasiswa}/toggle-status', [StudentManagementController::class, 'toggleStatus'])->name('mahasiswa.toggle-status');
+        Route::post('/mahasiswa/{mahasiswa}/resend-activation', [StudentManagementController::class, 'resendActivation'])->name('mahasiswa.resend-activation');
 
         // Reports / Laporan
         Route::get('/laporan', [ReportController::class, 'index'])->name('laporan.index');

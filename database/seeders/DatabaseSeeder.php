@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
             'role' => 'bendahara',
             'phone_number' => '082198765432',
             'is_active' => true,
+            'activated_at' => now(),
         ]);
 
         // 2. Create Primary Student (Hafizh Al-Fatih)
@@ -41,6 +42,7 @@ class DatabaseSeeder extends Seeder
             'role' => 'mahasiswa',
             'phone_number' => '081234567890',
             'is_active' => true,
+            'activated_at' => now(),
         ]);
 
         // 3. Create 31 other students
@@ -66,6 +68,7 @@ class DatabaseSeeder extends Seeder
                 'role' => 'mahasiswa',
                 'phone_number' => '0812345678' . str_pad($i, 2, '0', STR_PAD_LEFT),
                 'is_active' => true,
+                'activated_at' => now(),
             ]));
         }
 

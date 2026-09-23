@@ -28,6 +28,9 @@ class User extends Authenticatable
         'role',
         'phone_number',
         'is_active',
+        'activation_token',
+        'activation_expires_at',
+        'activated_at',
     ];
 
     /**
@@ -38,6 +41,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'activation_token',
     ];
 
     /**
@@ -51,7 +55,47 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
+            'activation_expires_at' => 'datetime',
+            'activated_at' => 'datetime',
         ];
+    }
+
+    /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        static::creating(function (User $user) {
+            if (! empty($user->password) && $user->activated_at === null) {
+                $user->activated_at = now();
+            }
+        });
+    }
+
+    /**
+     * Determine if the user has activated their account.
+     */
+    public function isActivated(): bool
+    {
+        return $this->activated_at !== null || ! empty($this->password);
+    }
+
+    /**
+     * Determine if the user has an activation pending.
+     */
+    public function hasPendingActivation(): bool
+    {
+        return empty($this->password) && $this->activated_at === null && $this->activation_token !== null;
+    }
+
+    /**
+     * Determine if the user's activation link has expired.
+     */
+    public function isActivationExpired(): bool
+    {
+        return $this->hasPendingActivation() 
+            && $this->activation_expires_at !== null 
+            && $this->activation_expires_at->isPast();
     }
 
     /**

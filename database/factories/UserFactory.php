@@ -33,8 +33,22 @@ class UserFactory extends Factory
             'role' => 'mahasiswa',
             'phone_number' => fake()->phoneNumber(),
             'is_active' => true,
+            'activated_at' => now(),
             'remember_token' => Str::random(10),
         ];
+    }
+
+    /**
+     * Indicate that the user is not activated yet.
+     */
+    public function unactivated(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'password' => null,
+            'activated_at' => null,
+            'activation_token' => hash('sha256', Str::random(64)),
+            'activation_expires_at' => now()->addHours(72),
+        ]);
     }
 
     /**
