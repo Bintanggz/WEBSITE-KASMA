@@ -93,7 +93,8 @@
                             <button type="button" 
                                     @click="$dispatch('open-payment-modal', { due_id: {{ $currentDue->id }} })" 
                                     class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-800 hover:bg-emerald-900 text-white font-semibold text-xs transition cursor-pointer shadow-2xs">
-                                <span>{{ $currentDue->rejectedPayment ? 'Unggah Ulang Bukti &rarr;' : 'Bayar Sekarang &rarr;' }}</span>
+                                <span>{{ $currentDue->rejectedPayment ? 'Unggah Ulang Bukti' : 'Bayar Sekarang' }}</span>
+                                <span aria-hidden="true">&rarr;</span>
                             </button>
                         @endif
                     </div>
