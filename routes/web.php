@@ -15,6 +15,7 @@ use App\Http\Controllers\Mahasiswa\FinancialTransparencyController;
 use App\Http\Controllers\Mahasiswa\PaymentController;
 use App\Http\Controllers\Mahasiswa\StudentDueController;
 use App\Http\Controllers\PaymentProofController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TransactionReceiptController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -51,9 +52,12 @@ Route::post('/aktivasi/{token}', [AccountActivationController::class, 'activate'
 |--------------------------------------------------------------------------
 */
 
-Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
-    ->middleware('auth')
-    ->name('logout');
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+    Route::get('/profil', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profil', [ProfileController::class, 'updateProfile'])->name('profile.update');
+    Route::put('/profil/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
+});
 
 Route::get('/payments/{payment}/proof', [PaymentProofController::class, 'show'])
     ->middleware('auth')
@@ -119,6 +123,9 @@ Route::middleware(['auth', 'role:bendahara'])
         Route::patch('/mahasiswa/{mahasiswa}/toggle-status', [StudentManagementController::class, 'toggleStatus'])->name('mahasiswa.toggle-status');
         Route::post('/mahasiswa/{mahasiswa}/resend-activation', [StudentManagementController::class, 'resendActivation'])->name('mahasiswa.resend-activation');
 
-        // Reports / Laporan
+        // Reports / Laporan & Export
         Route::get('/laporan', [ReportController::class, 'index'])->name('laporan.index');
+        Route::get('/laporan/print', [ReportController::class, 'printView'])->name('laporan.print');
+        Route::get('/laporan/export-transactions', [ReportController::class, 'exportTransactionsCsv'])->name('laporan.export.transactions');
+        Route::get('/laporan/export-compliance', [ReportController::class, 'exportComplianceCsv'])->name('laporan.export.compliance');
     });

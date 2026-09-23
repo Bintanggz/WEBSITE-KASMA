@@ -255,4 +255,60 @@ class TreasurerReportTest extends TestCase
         $response->assertSee('Rp 10.000');
         $response->assertSee('Bayar Iuran Pekan Ini Sekarang');
     }
+
+    public function test_bendahara_can_export_transactions_csv(): void
+    {
+        $response = $this->actingAs($this->bendahara)
+            ->get(route('bendahara.laporan.export.transactions'));
+
+        $response->assertOk();
+        $response->assertHeader('content-type', 'text/csv; charset=UTF-8');
+        $content = $response->streamedContent();
+
+        $this->assertStringContainsString('Pembayaran Iuran Kas Pekan ke-1 - Ahmad Mahasiswa', $content);
+        $this->assertStringContainsString('Beli Spidol Whiteboard', $content);
+        $this->assertStringContainsString('Pemasukan', $content);
+        $this->assertStringContainsString('Pengeluaran', $content);
+    }
+
+    public function test_bendahara_can_export_compliance_csv(): void
+    {
+        $response = $this->actingAs($this->bendahara)
+            ->get(route('bendahara.laporan.export.compliance'));
+
+        $response->assertOk();
+        $response->assertHeader('content-type', 'text/csv; charset=UTF-8');
+        $content = $response->streamedContent();
+
+        $this->assertStringContainsString('Ahmad Mahasiswa', $content);
+        $this->assertStringContainsString('210001', $content);
+        $this->assertStringContainsString('Budi Mahasiswa', $content);
+    }
+
+    public function test_bendahara_can_view_official_printable_report(): void
+    {
+        $response = $this->actingAs($this->bendahara)
+            ->get(route('bendahara.laporan.print'));
+
+        $response->assertOk();
+        $response->assertSee('Universitas Duta Bangsa Surakarta');
+        $response->assertSee('Laporan Pertanggungjawaban Keuangan Kas Kelas');
+        $response->assertSee('Bendahara Kelas TI26A3');
+        $response->assertSee('Ketua Kelas TI26A3');
+    }
+
+    public function test_student_cannot_access_export_or_print_routes(): void
+    {
+        $this->actingAs($this->mahasiswa1)
+            ->get(route('bendahara.laporan.export.transactions'))
+            ->assertForbidden();
+
+        $this->actingAs($this->mahasiswa1)
+            ->get(route('bendahara.laporan.export.compliance'))
+            ->assertForbidden();
+
+        $this->actingAs($this->mahasiswa1)
+            ->get(route('bendahara.laporan.print'))
+            ->assertForbidden();
+    }
 }

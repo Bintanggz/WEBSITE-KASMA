@@ -179,7 +179,7 @@
 
         <!-- User Profile Footer & Logout -->
         <div class="pt-4 border-t border-stone-100 space-y-2">
-            <div class="flex items-center justify-between p-2 rounded-lg bg-stone-50/70 border border-stone-200/60">
+            <a href="{{ route('profile.edit') }}" class="flex items-center justify-between p-2 rounded-lg bg-stone-50/70 hover:bg-stone-100 border border-stone-200/60 transition group cursor-pointer" title="Buka Pengaturan Profil & Sandi">
                 <div class="flex items-center gap-2.5 min-w-0">
                     <div class="w-8 h-8 rounded-full bg-stone-200 text-stone-700 flex items-center justify-center font-semibold text-xs border border-stone-300 shrink-0">
                         {{ strtoupper(substr(auth()->user()->name ?? ($role === 'bendahara' ? 'Nadya' : 'Hafizh'), 0, 2)) }}
@@ -198,7 +198,7 @@
                     </div>
                 </div>
                 <div class="w-2 h-2 rounded-full bg-emerald-500 shrink-0" title="Sesi Aktif"></div>
-            </div>
+            </a>
 
             <!-- Logout Button Form -->
             <form method="POST" action="{{ route('logout') }}">

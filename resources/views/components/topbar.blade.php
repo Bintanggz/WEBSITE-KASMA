@@ -90,6 +90,15 @@
                 @endif
             </a>
 
+            <!-- User Profile Link -->
+            <a href="{{ route('profile.edit') }}" 
+               class="p-2 text-stone-500 hover:text-stone-800 hover:bg-stone-100 rounded-lg transition"
+               title="Pengaturan Profil & Sandi">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+            </a>
+
             <!-- Quick Logout Form -->
             <form method="POST" action="{{ route('logout') }}" class="inline">
                 @csrf

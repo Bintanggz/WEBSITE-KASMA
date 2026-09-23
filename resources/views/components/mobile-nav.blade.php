@@ -131,19 +131,24 @@
 
         <!-- Drawer Footer Profile -->
         <div class="p-4 border-t border-stone-100 bg-stone-50">
-            <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-full bg-stone-200 text-stone-700 flex items-center justify-center font-semibold text-xs border border-stone-300">
-                    {{ $initials }}
+            <a href="{{ route('profile.edit') }}" 
+               @click="mobileMenuOpen = false" 
+               class="flex items-center justify-between p-2 rounded-lg bg-white border border-stone-200 hover:bg-stone-100 transition cursor-pointer"
+               title="Pengaturan Profil & Sandi">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-8 h-8 rounded-full bg-stone-200 text-stone-700 flex items-center justify-center font-semibold text-xs border border-stone-300 shrink-0">
+                        {{ $initials }}
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-xs font-semibold text-stone-900 truncate">
+                            {{ $user->name ?? ($role === 'bendahara' ? 'Nadya Putri' : 'Hafizh Al-Fatih') }}
+                        </p>
+                        <p class="text-[11px] text-stone-500">
+                            {{ $role === 'bendahara' ? 'Bendahara' : ('Mahasiswa (' . ($user->nim ?? '220401') . ')') }} &bull; Profil &rarr;
+                        </p>
+                    </div>
                 </div>
-                <div class="min-w-0">
-                    <p class="text-xs font-semibold text-stone-900 truncate">
-                        {{ $user->name ?? ($role === 'bendahara' ? 'Nadya Putri' : 'Hafizh Al-Fatih') }}
-                    </p>
-                    <p class="text-[11px] text-stone-500">
-                        {{ $role === 'bendahara' ? 'Bendahara Kelas' : ('Mahasiswa (' . ($user->nim ?? '220401') . ')') }}
-                    </p>
-                </div>
-            </div>
+            </a>
         </div>
     </div>
 
