@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="KASMA - Sistem Manajemen Uang Kas Mahasiswa yang transparan, rapi, dan mudah digunakan.">
     <title>{{ $title }} &mdash; KASMA</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/logo-udb.png') }}">
     
     <!-- Google Font: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -206,7 +207,7 @@
             <div class="flex items-center justify-between pb-3 border-b border-stone-100">
                 <div class="flex items-center space-x-2">
                     <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
-                    <h3 class="font-semibold text-stone-900 text-sm">Bayar Kas Kelas TI-3A</h3>
+                    <h3 class="font-semibold text-stone-900 text-sm">Bayar Kas Kelas TI26A3</h3>
                 </div>
                 <button type="button" @click="paymentModalOpen = false" class="text-stone-400 hover:text-stone-600">
                     <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -223,7 +224,7 @@
                         <div>
                             <span class="text-[10px] text-stone-500 block">Bank Central Asia (BCA)</span>
                             <span class="font-mono font-bold text-stone-900 text-xs">873-019-2819</span>
-                            <span class="text-[10px] text-stone-500 block">a.n. Bendahara Kas TI-3A</span>
+                            <span class="text-[10px] text-stone-500 block">a.n. Bendahara Kas TI26A3</span>
                         </div>
                         <button type="button" @click="copyAccount()" class="text-[10px] bg-emerald-50 hover:bg-emerald-100 text-emerald-800 px-2 py-1 rounded font-semibold border border-emerald-200 transition cursor-pointer">
                             <span x-text="copied ? 'Tersalin!' : 'Salin'"></span>

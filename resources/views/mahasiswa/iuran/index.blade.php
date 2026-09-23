@@ -6,7 +6,7 @@
             <div>
                 <h2 class="text-xl font-bold text-stone-900 tracking-tight">Kewajiban Iuran Kas Mingguan</h2>
                 <p class="text-xs sm:text-sm text-stone-500 mt-0.5">
-                    Mahasiswa: <span class="font-medium text-stone-800">{{ $user->name }}</span> &bull; NIM: <span class="font-mono text-stone-700 font-semibold">{{ $user->nim ?? '-' }}</span> &bull; Kelas: <span class="text-stone-700">TI-3A</span>
+                    Mahasiswa: <span class="font-medium text-stone-800">{{ $user->name }}</span> &bull; NIM: <span class="font-mono text-stone-700 font-semibold">{{ $user->nim ?? '-' }}</span> &bull; Kelas: <span class="text-stone-700">TI26A3</span>
                 </p>
             </div>
             <div class="flex items-center gap-2">

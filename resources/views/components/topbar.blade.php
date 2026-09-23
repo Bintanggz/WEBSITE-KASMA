@@ -35,7 +35,7 @@
                     @endif
                 </div>
                 <p class="text-xs text-stone-500 hidden sm:block">
-                    {{ $role === 'bendahara' ? 'Kelola kas kelas TI-3A & verifikasi pembayaran' : 'Informasi iuran kas & keuangan kelas TI-3A' }}
+                    {{ $role === 'bendahara' ? 'Kelola kas kelas TI26A3 & verifikasi pembayaran' : 'Informasi iuran kas & keuangan kelas TI26A3' }}
                 </p>
             </div>
         </div>

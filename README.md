@@ -13,7 +13,7 @@
 
 ## 📌 Tentang KASMA
 
-**KASMA (Class Cash Management System)** adalah aplikasi pengelolaan dan transparansi kas kelas berbasis web yang dirancang khusus untuk mahasiswa perguruan tinggi (studi kasus: Kelas TI-3A Teknik Informatika).
+**KASMA (Class Cash Management System)** adalah aplikasi pengelolaan dan transparansi kas kelas berbasis web yang dirancang khusus untuk mahasiswa perguruan tinggi (studi kasus: Kelas TI26A3 Teknik Informatika, Universitas Duta Bangsa Surakarta).
 
 Sistem ini memecahkan permasalahan pencatatan kas kelas konvensional seperti:
 - Pengumpulan iuran manual yang sering tercecer dan sulit dilacak.
@@ -204,7 +204,7 @@ erDiagram
    ```
    *Perintah ini akan membuat seluruh tabel database dan mengisinya dengan data awal:*
    - 1 Akun Bendahara
-   - 32 Akun Mahasiswa Kelas TI-3A
+   - 32 Akun Mahasiswa Kelas TI26A3
    - 16 Periode Kas Semester Genap 2025/2026 (Rp 10.000 / pekan)
    - Riwayat kewajiban iuran, pembayaran uji coba, serta transaksi buku kas.
 

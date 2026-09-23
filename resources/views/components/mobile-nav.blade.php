@@ -31,9 +31,7 @@
             <!-- Header with Close Button -->
             <div class="h-16 flex items-center justify-between px-5 border-b border-stone-100">
                 <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-lg bg-stone-900 flex items-center justify-center text-white font-semibold text-xs">
-                        K
-                    </div>
+                    <img src="{{ asset('images/logo-udb.png') }}" alt="Logo Universitas Duta Bangsa" class="w-8 h-8 object-contain rounded-full">
                     <div>
                         <div class="flex items-center gap-1.5">
                             <span class="font-bold text-stone-900 tracking-tight text-sm">KASMA</span>
@@ -41,7 +39,7 @@
                                 {{ $role === 'bendahara' ? 'Bendahara' : 'Mahasiswa' }}
                             </span>
                         </div>
-                        <p class="text-[11px] text-stone-500">Kelas TI-3A</p>
+                        <p class="text-[11px] text-stone-500">Kelas TI26A3</p>
                     </div>
                 </div>
                 <button type="button" @click="mobileMenuOpen = false" class="p-1.5 rounded-lg text-stone-400 hover:text-stone-700 hover:bg-stone-100 cursor-pointer">

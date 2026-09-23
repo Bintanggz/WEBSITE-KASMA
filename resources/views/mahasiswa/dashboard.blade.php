@@ -6,7 +6,7 @@
             <div>
                 <h2 class="text-xl font-bold text-stone-900 tracking-tight">Halo, {{ $user->name }}</h2>
                 <p class="text-xs sm:text-sm text-stone-500 mt-0.5">
-                    NIM: <span class="font-mono text-stone-700 font-semibold">{{ $user->nim ?? '-' }}</span> &bull; Kelas: <span class="text-stone-700 font-medium">TI-3A &bull; Teknik Informatika</span>
+                    NIM: <span class="font-mono text-stone-700 font-semibold">{{ $user->nim ?? '-' }}</span> &bull; Kelas: <span class="text-stone-700 font-medium">TI26A3 &bull; Teknik Informatika</span>
                 </p>
             </div>
             
@@ -315,7 +315,7 @@
                 <div class="flex items-center justify-between pb-3 mb-3 border-b border-stone-100">
                     <div>
                         <h4 class="font-semibold text-stone-900 text-sm">Transparansi Kas Kelas</h4>
-                        <p class="text-xs text-stone-500">Ringkasan buku besar kelas TI-3A</p>
+                        <p class="text-xs text-stone-500">Ringkasan buku besar kelas TI26A3</p>
                     </div>
                     <span class="text-[10px] font-semibold uppercase px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200/60">Terbuka</span>
                 </div>

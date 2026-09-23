@@ -10,6 +10,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     
+    <link rel="icon" type="image/png" href="{{ asset('images/logo-udb.png') }}">
+    
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="h-full font-sans antialiased text-stone-800 bg-[#FAF9F5] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -17,14 +19,12 @@
     <div class="sm:mx-auto sm:w-full sm:max-w-md px-4">
         <!-- Logo & Class Header -->
         <div class="text-center">
-            <div class="inline-flex w-12 h-12 rounded-xl bg-stone-900 items-center justify-center text-white font-mono text-xl font-bold shadow-xs">
-                K
-            </div>
+            <img src="{{ asset('images/logo-udb.png') }}" alt="Logo Universitas Duta Bangsa" class="w-16 h-16 object-contain mx-auto rounded-full shadow-xs">
             <h2 class="mt-4 text-2xl font-bold tracking-tight text-stone-900">
                 Aktivasi Akun Mahasiswa
             </h2>
             <p class="mt-1 text-xs text-stone-500">
-                Sistem Manajemen Kas Kelas TI-3A &bull; Informatika
+                Sistem Manajemen Kas Kelas TI26A3 &bull; Universitas Duta Bangsa
             </p>
         </div>
 

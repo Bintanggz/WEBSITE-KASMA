@@ -42,7 +42,7 @@
                         </span>
                     </div>
                     <p class="text-xs sm:text-sm text-stone-500 mt-0.5">
-                        Kelas TI-3A &bull; Pengelola: <span class="font-medium text-stone-700">{{ $user->name }} (Bendahara)</span>
+                        Kelas TI26A3 &bull; Pengelola: <span class="font-medium text-stone-700">{{ $user->name }} (Bendahara)</span>
                     </p>
                 </div>
 
@@ -206,7 +206,7 @@
                             @php
                                 $student = $due->user;
                                 $cleanPhone = preg_replace('/[^0-9]/', '', $student->phone_number ?? '6280000000000');
-                                $reminderMsg = "Halo {$student->name}, mengingatkan bahwa iuran kas kelas TI-3A untuk {$activePeriod->name} sebesar Rp " . number_format($due->amount, 0, ',', '.') . " belum tercatat lunas. Mohon segera transfer ke BCA 873-019-2819 a.n Bendahara Kas TI-3A. Terima kasih!";
+                                $reminderMsg = "Halo {$student->name}, mengingatkan bahwa iuran kas kelas TI26A3 untuk {$activePeriod->name} sebesar Rp " . number_format($due->amount, 0, ',', '.') . " belum tercatat lunas. Mohon segera transfer ke BCA 873-019-2819 a.n Bendahara Kas TI26A3. Terima kasih!";
                             @endphp
                             <div class="p-3.5 flex items-center justify-between hover:bg-stone-50/50 transition">
                                 <div class="flex items-center gap-3">
@@ -248,7 +248,7 @@
                     <div class="p-5 border-b border-stone-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                         <div>
                             <h3 class="font-semibold text-stone-900 text-base tracking-tight">Catatan Transaksi Terbaru</h3>
-                            <p class="text-xs text-stone-500">Mutasi kas masuk dan kas keluar kelas TI-3A</p>
+                            <p class="text-xs text-stone-500">Mutasi kas masuk dan kas keluar kelas TI26A3</p>
                         </div>
                         
                         <!-- Filter Pills -->
@@ -714,7 +714,7 @@
 
                 @php
                     $unpaidNames = $unpaidStudents->map(fn($d) => "- " . $d->user->name)->join("\n");
-                    $broadcastText = "[PENGINGAT IURAN KAS KELAS TI-3A]\n\nHalo rekan-rekan, mengingatkan kembali untuk iuran kas " . ($activePeriod->name ?? 'Pekan Ini') . " (Rp 10.000 / pekan).\n\nBatas jatuh tempo: " . ($activePeriod?->due_date ? $activePeriod->due_date->translatedFormat('l, d M Y') : 'Jumat') . "\nRekening Kas: BCA 873-019-2819 a.n Bendahara Kas TI-3A.\n\nDaftar rekan yang belum lunas:\n" . ($unpaidNames ?: '- Semua lunas!') . "\n\nMohon segera melunasi dan mengunggah bukti di KASMA. Terima kasih!";
+                    $broadcastText = "[PENGINGAT IURAN KAS KELAS TI26A3]\n\nHalo rekan-rekan, mengingatkan kembali untuk iuran kas " . ($activePeriod->name ?? 'Pekan Ini') . " (Rp 10.000 / pekan).\n\nBatas jatuh tempo: " . ($activePeriod?->due_date ? $activePeriod->due_date->translatedFormat('l, d M Y') : 'Jumat') . "\nRekening Kas: BCA 873-019-2819 a.n Bendahara Kas TI26A3.\n\nDaftar rekan yang belum lunas:\n" . ($unpaidNames ?: '- Semua lunas!') . "\n\nMohon segera melunasi dan mengunggah bukti di KASMA. Terima kasih!";
                 @endphp
 
                 <div class="mt-4 space-y-3 text-xs">
@@ -777,7 +777,7 @@
                     <div class="p-3 rounded-lg bg-emerald-50/70 border border-emerald-200 text-emerald-950 space-y-1">
                         <p class="font-semibold text-[11px] uppercase tracking-wider text-emerald-800">Rekening Kas Aktif</p>
                         <p class="text-xs">Bank Central Asia (BCA): <strong class="font-mono text-stone-900">873-019-2819</strong></p>
-                        <p class="text-[11px] text-stone-500">Atas Nama: Bendahara Kas TI-3A ({{ $user->name }})</p>
+                        <p class="text-[11px] text-stone-500">Atas Nama: Bendahara Kas TI26A3 ({{ $user->name }})</p>
                     </div>
 
                     <p class="text-[11px] text-stone-400">

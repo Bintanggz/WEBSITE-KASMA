@@ -15,7 +15,7 @@
                 </div>
                 <p class="text-xs sm:text-sm text-stone-500 mt-0.5">
                     <span x-show="currentRole === 'treasurer'">Kelola setoran mingguan, verifikasi bukti transfer, dan pantau pengeluaran kelas.</span>
-                    <span x-show="currentRole === 'student'">Pantau transparansi kas kelas TI-3A dan status pembayaran iuran mingguan Anda.</span>
+                    <span x-show="currentRole === 'student'">Pantau transparansi kas kelas TI26A3 dan status pembayaran iuran mingguan Anda.</span>
                 </p>
             </div>
 
@@ -671,13 +671,13 @@
                             <svg class="w-4 h-4 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                             </svg>
-                            <span>Rekening Resmi Kas TI-3A</span>
+                            <span>Rekening Resmi Kas TI26A3</span>
                         </div>
                         <div class="bg-white p-2.5 rounded border border-emerald-200 text-[11px] font-mono flex items-center justify-between">
                             <div>
                                 <span class="text-stone-500 block text-[10px]">Bank Central Asia (BCA)</span>
                                 <span class="font-bold text-stone-900 text-xs">873-019-2819</span>
-                                <span class="text-stone-500 block text-[10px]">a.n. Bendahara Kas TI-3A</span>
+                                <span class="text-stone-500 block text-[10px]">a.n. Bendahara Kas TI26A3</span>
                             </div>
                             <span class="text-[10px] text-emerald-800 bg-emerald-50 px-1.5 py-0.5 rounded font-sans font-medium">Salin</span>
                         </div>

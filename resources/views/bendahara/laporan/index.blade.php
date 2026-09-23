@@ -23,7 +23,7 @@
                         </span>
                     </div>
                     <p class="text-xs sm:text-sm text-stone-500 mt-0.5">
-                        Rekapitulasi keuangan kas kelas TI-3A, kepatuhan iuran mingguan mahasiswa, dan mutasi pembukuan.
+                        Rekapitulasi keuangan kas kelas TI26A3, kepatuhan iuran mingguan mahasiswa, dan mutasi pembukuan.
                     </p>
                 </div>
 
@@ -185,7 +185,7 @@
                 <div class="p-4 border-b border-stone-100 flex items-center justify-between">
                     <div>
                         <h3 class="font-bold text-stone-900 text-sm">Status Kepatuhan Seluruh Mahasiswa</h3>
-                        <p class="text-xs text-stone-500">Daftar rekapitulasi pelunasan kas per individu mahasiswa kelas TI-3A</p>
+                        <p class="text-xs text-stone-500">Daftar rekapitulasi pelunasan kas per individu mahasiswa kelas TI26A3</p>
                     </div>
                     <span class="text-xs font-mono text-stone-500 bg-stone-100 px-2 py-1 rounded">
                         Total: {{ $studentSummaries->count() }} Mahasiswa

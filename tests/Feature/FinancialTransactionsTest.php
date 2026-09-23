@@ -71,7 +71,7 @@ class FinancialTransactionsTest extends TestCase
             'amount' => '50000.00',
             'transaction_date' => now()->toDateString(),
             'category' => 'Donasi',
-            'description' => 'Donasi Alumni TI-3A',
+            'description' => 'Donasi Alumni TI26A3',
             'created_by' => $this->bendahara->id,
         ]);
 

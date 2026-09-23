@@ -105,7 +105,7 @@
                 <span class="text-2xl sm:text-3xl font-bold font-mono text-stone-900 mt-2 block">
                     {{ $totalStudents }}
                 </span>
-                <span class="text-[11px] text-stone-400 mt-1 block">Seluruh data kelas TI-3A</span>
+                <span class="text-[11px] text-stone-400 mt-1 block">Seluruh data kelas TI26A3</span>
             </div>
 
             <div class="bg-white p-4 sm:p-5 rounded-xl border border-stone-200/90 shadow-2xs">
@@ -202,7 +202,7 @@
                                         </div>
                                         <div class="min-w-0">
                                             <p class="font-semibold text-stone-900 truncate">{{ $student->name }}</p>
-                                            <p class="text-[11px] text-stone-400">Kelas TI-3A</p>
+                                            <p class="text-[11px] text-stone-400">Kelas TI26A3</p>
                                         </div>
                                     </div>
                                 </td>

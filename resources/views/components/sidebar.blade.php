@@ -4,9 +4,7 @@
     <!-- Brand / Class Identity -->
     <div class="h-16 flex items-center px-6 border-b border-stone-100">
         <a href="{{ $role === 'bendahara' ? '/bendahara/dashboard' : '/mahasiswa/dashboard' }}" class="flex items-center gap-3 group">
-            <div class="w-9 h-9 rounded-lg bg-stone-900 flex items-center justify-center text-white font-semibold text-sm tracking-wide shadow-2xs group-hover:bg-stone-800 transition">
-                <span class="font-mono">K</span>
-            </div>
+            <img src="{{ asset('images/logo-udb.png') }}" alt="Logo Universitas Duta Bangsa" class="w-9 h-9 object-contain rounded-full shadow-2xs group-hover:scale-105 transition">
             <div>
                 <div class="flex items-center gap-1.5">
                     <span class="font-bold text-stone-900 tracking-tight text-base">KASMA</span>
@@ -14,7 +12,7 @@
                         {{ $role === 'bendahara' ? 'Bendahara' : 'Mahasiswa' }}
                     </span>
                 </div>
-                <p class="text-xs text-stone-500 font-medium leading-none">Kelas TI-3A &bull; Informatika</p>
+                <p class="text-xs text-stone-500 font-medium leading-none">Kelas TI26A3 &bull; Informatika</p>
             </div>
         </a>
     </div>
