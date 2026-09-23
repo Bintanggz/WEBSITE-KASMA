@@ -28,23 +28,26 @@ class DashboardController extends Controller
         $currentDue = $activePeriod
             ? StudentDue::where('cash_period_id', $activePeriod->id)
                 ->where('user_id', $user->id)
-                ->with(['approvedPayment', 'pendingPayment'])
+                ->with(['approvedPayment', 'pendingPayment', 'rejectedPayment'])
                 ->first()
             : null;
 
         // 2. Unpaid obligations available for payment
         $unpaidDues = StudentDue::where('user_id', $user->id)
             ->where('status', 'unpaid')
-            ->with(['cashPeriod', 'pendingPayment'])
+            ->with(['cashPeriod', 'pendingPayment', 'rejectedPayment'])
             ->get()
             ->sortBy(fn($d) => $d->cashPeriod->week_number ?? 0);
 
         $unpaidAmount = $unpaidDues->sum('amount');
+        $pastUnpaidWeeksCount = $activePeriod
+            ? $unpaidDues->filter(fn($d) => ($d->cashPeriod->week_number ?? 0) < $activePeriod->week_number)->count()
+            : 0;
 
         // 3. Semester progress and weekly matrix
         $allPeriods = CashPeriod::orderBy('week_number')->get();
         $studentDuesMap = StudentDue::where('user_id', $user->id)
-            ->with(['approvedPayment', 'pendingPayment'])
+            ->with(['approvedPayment', 'pendingPayment', 'rejectedPayment'])
             ->get()
             ->keyBy('cash_period_id');
 
@@ -98,7 +101,8 @@ class DashboardController extends Controller
             'totalIncome',
             'totalExpense',
             'recentExpenses',
-            'bendaharaContact'
+            'bendaharaContact',
+            'pastUnpaidWeeksCount'
         ));
     }
 }

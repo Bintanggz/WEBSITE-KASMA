@@ -66,20 +66,37 @@
                            class="w-full px-3.5 py-2.5 rounded-lg bg-stone-50/50 border border-stone-300 text-stone-900 text-sm placeholder-stone-400 focus:bg-white focus:outline-none focus:border-stone-800 focus:ring-1 focus:ring-stone-800 transition">
                 </div>
 
-                <!-- Password -->
-                <div>
+                <!-- Password with Show/Hide Toggle -->
+                <div x-data="{ showPassword: false }">
                     <div class="flex items-center justify-between mb-1.5">
                         <label for="password" class="block text-xs font-semibold text-stone-700 uppercase tracking-wider">
                             Kata Sandi
                         </label>
                     </div>
-                    <input id="password" 
-                           name="password" 
-                           type="password" 
-                           required 
-                           autocomplete="current-password"
-                           placeholder="••••••••"
-                           class="w-full px-3.5 py-2.5 rounded-lg bg-stone-50/50 border border-stone-300 text-stone-900 text-sm placeholder-stone-400 focus:bg-white focus:outline-none focus:border-stone-800 focus:ring-1 focus:ring-stone-800 transition">
+                    <div class="relative">
+                        <input id="password" 
+                               name="password" 
+                               :type="showPassword ? 'text' : 'password'"
+                               type="password" 
+                               required 
+                               autocomplete="current-password"
+                               placeholder="••••••••"
+                               class="w-full px-3.5 py-2.5 pr-10 rounded-lg bg-stone-50/50 border border-stone-300 text-stone-900 text-sm placeholder-stone-400 focus:bg-white focus:outline-none focus:border-stone-800 focus:ring-1 focus:ring-stone-800 transition">
+                        <button type="button" 
+                                @click="showPassword = !showPassword"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 focus:outline-none cursor-pointer"
+                                :title="showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'">
+                            <!-- Eye icon (when hidden) -->
+                            <svg x-show="!showPassword" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                            <!-- Eye Slash icon (when shown) -->
+                            <svg x-show="showPassword" x-cloak class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18" />
+                            </svg>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Remember Me -->
@@ -95,32 +112,38 @@
                 <!-- Submit Button -->
                 <div class="pt-2">
                     <button type="submit" 
-                            class="w-full py-2.5 px-4 rounded-lg bg-stone-900 hover:bg-stone-800 text-white font-semibold text-sm transition shadow-2xs focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stone-900">
+                            class="w-full py-2.5 px-4 rounded-lg bg-stone-900 hover:bg-stone-800 text-white font-semibold text-sm transition shadow-2xs focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stone-900 cursor-pointer">
                         Masuk
                     </button>
                 </div>
             </form>
 
             <!-- Demo Account Credentials Helper -->
-            <div class="mt-6 pt-5 border-t border-stone-100">
-                <p class="text-[11px] font-semibold uppercase tracking-wider text-stone-400 mb-2.5">Akun Uji Coba (Development)</p>
-                <div class="space-y-2 text-xs">
-                    <div class="p-2.5 rounded-lg bg-stone-50 border border-stone-200/80 flex items-center justify-between">
-                        <div>
-                            <span class="font-semibold text-stone-900 block text-[11px]">Bendahara Kelas</span>
-                            <span class="font-mono text-stone-500 text-[10px]">bendahara@kasma.edu</span>
+            @if (app()->environment('local', 'testing'))
+                <div class="mt-6 pt-5 border-t border-stone-100">
+                    <p class="text-[11px] font-semibold uppercase tracking-wider text-stone-400 mb-2.5">Akun Uji Coba (Klik untuk Isi Otomatis)</p>
+                    <div class="space-y-2 text-xs">
+                        <div role="button"
+                             onclick="document.getElementById('login').value = 'bendahara@kasma.edu'; document.getElementById('password').value = 'password';"
+                             class="p-2.5 rounded-lg bg-stone-50 hover:bg-stone-100 border border-stone-200/80 flex items-center justify-between cursor-pointer transition">
+                            <div>
+                                <span class="font-semibold text-stone-900 block text-[11px]">Bendahara Kelas</span>
+                                <span class="font-mono text-stone-500 text-[10px]">bendahara@kasma.edu</span>
+                            </div>
+                            <span class="text-[10px] font-mono text-stone-600 bg-white border border-stone-200 px-1.5 py-0.5 rounded shadow-2xs">Gunakan &rarr;</span>
                         </div>
-                        <span class="text-[10px] font-mono text-stone-600 bg-white border border-stone-200 px-1.5 py-0.5 rounded">pw: password</span>
-                    </div>
-                    <div class="p-2.5 rounded-lg bg-stone-50 border border-stone-200/80 flex items-center justify-between">
-                        <div>
-                            <span class="font-semibold text-stone-900 block text-[11px]">Mahasiswa (Hafizh)</span>
-                            <span class="font-mono text-stone-500 text-[10px]">NIM: 220401 atau hafizh@kasma.edu</span>
+                        <div role="button"
+                             onclick="document.getElementById('login').value = '220401'; document.getElementById('password').value = 'password';"
+                             class="p-2.5 rounded-lg bg-stone-50 hover:bg-stone-100 border border-stone-200/80 flex items-center justify-between cursor-pointer transition">
+                            <div>
+                                <span class="font-semibold text-stone-900 block text-[11px]">Mahasiswa (Hafizh)</span>
+                                <span class="font-mono text-stone-500 text-[10px]">NIM: 220401 atau hafizh@kasma.edu</span>
+                            </div>
+                            <span class="text-[10px] font-mono text-stone-600 bg-white border border-stone-200 px-1.5 py-0.5 rounded shadow-2xs">Gunakan &rarr;</span>
                         </div>
-                        <span class="text-[10px] font-mono text-stone-600 bg-white border border-stone-200 px-1.5 py-0.5 rounded">pw: password</span>
                     </div>
                 </div>
-            </div>
+            @endif
 
         </div>
 

@@ -79,12 +79,21 @@
                     <span class="text-xs text-stone-500 block">Aksi Pembayaran</span>
                     <div class="mt-1">
                         @if($currentDue->isPaid())
-                            <span class="text-xs text-emerald-700 font-medium">Telah diverifikasi lunas</span>
+                            <span class="text-xs text-emerald-700 font-semibold flex items-center gap-1">
+                                <svg class="w-4 h-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span>Telah diverifikasi lunas</span>
+                            </span>
+                        @elseif($currentDue->pendingPayment)
+                            <span class="text-xs text-amber-800 font-semibold bg-amber-50 px-2.5 py-1 rounded border border-amber-200 inline-block">
+                                Menunggu Verifikasi
+                            </span>
                         @else
                             <button type="button" 
-                                    @click="paymentModalOpen = true" 
+                                    @click="$dispatch('open-payment-modal', { due_id: {{ $currentDue->id }} })" 
                                     class="w-full inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-800 hover:bg-emerald-900 text-white font-semibold text-xs transition cursor-pointer shadow-2xs">
-                                <span>Bayar Sekarang &rarr;</span>
+                                <span>{{ $currentDue->rejectedPayment ? 'Unggah Ulang Bukti &rarr;' : 'Bayar Sekarang &rarr;' }}</span>
                             </button>
                         @endif
                     </div>
@@ -137,16 +146,35 @@
         </div>
     </div>
 
-    <!-- All Obligations Table -->
-    <div class="bg-white rounded-xl border border-stone-200/90 shadow-2xs overflow-hidden mb-8">
-        <div class="p-5 border-b border-stone-100 flex items-center justify-between">
+    <!-- All Obligations Table with Filter Tabs -->
+    <div class="bg-white rounded-xl border border-stone-200/90 shadow-2xs overflow-hidden mb-8" x-data="{ filter: 'semua' }">
+        <div class="p-5 border-b border-stone-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-stone-50/40">
             <div>
                 <h3 class="font-bold text-stone-900 text-base tracking-tight">Daftar Seluruh Kewajiban Kas Semester</h3>
-                <p class="text-xs text-stone-500 mt-0.5">Rincian status pembayaran untuk setiap pekan perkuliahan</p>
+                <p class="text-xs text-stone-500 mt-0.5">Rincian status pembayaran dan aksi setor untuk setiap pekan</p>
             </div>
-            <span class="text-xs font-mono text-stone-600 bg-stone-100 px-2.5 py-1 rounded-md">
-                {{ $totalDuesCount }} Pekan
-            </span>
+            
+            <!-- Quick Filter Tabs -->
+            <div class="flex items-center gap-1 bg-stone-100 p-1 rounded-lg border border-stone-200/80 text-xs">
+                <button type="button" 
+                        @click="filter = 'semua'"
+                        :class="filter === 'semua' ? 'bg-white text-stone-900 font-semibold shadow-xs' : 'text-stone-500 hover:text-stone-800'"
+                        class="px-2.5 py-1 rounded-md transition text-xs cursor-pointer">
+                    Semua ({{ $totalDuesCount }})
+                </button>
+                <button type="button" 
+                        @click="filter = 'belum_bayar'"
+                        :class="filter === 'belum_bayar' ? 'bg-white text-stone-900 font-semibold shadow-xs' : 'text-stone-500 hover:text-stone-800'"
+                        class="px-2.5 py-1 rounded-md transition text-xs cursor-pointer">
+                    Belum Lunas ({{ $unpaidDuesCount }})
+                </button>
+                <button type="button" 
+                        @click="filter = 'lunas'"
+                        :class="filter === 'lunas' ? 'bg-white text-stone-900 font-semibold shadow-xs' : 'text-stone-500 hover:text-stone-800'"
+                        class="px-2.5 py-1 rounded-md transition text-xs cursor-pointer">
+                    Lunas ({{ $paidDuesCount }})
+                </button>
+            </div>
         </div>
 
         <div class="overflow-x-auto">
@@ -158,7 +186,7 @@
                         <th class="py-3 px-4">Jatuh Tempo</th>
                         <th class="py-3 px-4 text-right">Nominal</th>
                         <th class="py-3 px-4 text-center">Status Kewajiban</th>
-                        <th class="py-3 px-4 text-right">Tanggal Pelunasan</th>
+                        <th class="py-3 px-4 text-center">Aksi / Pembayaran</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-stone-100">
@@ -166,8 +194,10 @@
                         @php
                             $isPaid = $due->isPaid();
                             $isActive = $due->cash_period_id === ($activePeriod?->id ?? null);
+                            $isPending = $due->pendingPayment !== null;
                         @endphp
-                        <tr class="hover:bg-stone-50/50 transition {{ $isActive ? 'bg-emerald-50/20' : '' }}">
+                        <tr class="hover:bg-stone-50/50 transition {{ $isActive ? 'bg-emerald-50/20' : '' }}"
+                            x-show="filter === 'semua' || (filter === 'belum_bayar' && '{{ $due->status }}' === 'unpaid') || (filter === 'lunas' && '{{ $due->status }}' === 'paid')">
                             <td class="py-3.5 px-4 font-semibold text-stone-900 whitespace-nowrap">
                                 <div class="flex items-center gap-2">
                                     @if($isActive)
@@ -194,17 +224,36 @@
                                     <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/60">
                                         Lunas
                                     </span>
+                                @elseif($isPending)
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-50 text-amber-800 border border-amber-200/60">
+                                        Menunggu Verifikasi
+                                    </span>
+                                @elseif($due->rejectedPayment)
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-50 text-rose-800 border border-rose-200/60" title="{{ $due->rejectedPayment->rejection_reason }}">
+                                        Ditolak
+                                    </span>
                                 @else
                                     <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-50 text-rose-800 border border-rose-200/60">
                                         Belum Bayar
                                     </span>
                                 @endif
                             </td>
-                            <td class="py-3.5 px-4 text-right font-mono text-stone-400 whitespace-nowrap">
+                            <td class="py-3.5 px-4 text-center whitespace-nowrap">
                                 @if($isPaid)
-                                    {{ $due->updated_at ? $due->updated_at->format('d M Y, H:i') : '-' }}
+                                    <span class="text-emerald-700 text-xs font-semibold flex items-center justify-center gap-1">
+                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        <span>Lunas</span>
+                                    </span>
+                                @elseif($isPending)
+                                    <span class="text-[11px] text-amber-800 font-medium">Dalam Review</span>
                                 @else
-                                    <span class="text-stone-300">&mdash;</span>
+                                    <button type="button" 
+                                            @click="$dispatch('open-payment-modal', { due_id: {{ $due->id }} })"
+                                            class="px-2.5 py-1 rounded-md bg-emerald-800 hover:bg-emerald-900 text-white font-semibold text-[11px] transition shadow-2xs cursor-pointer">
+                                        Bayar &rarr;
+                                    </button>
                                 @endif
                             </td>
                         </tr>

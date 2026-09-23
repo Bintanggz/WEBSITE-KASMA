@@ -43,8 +43,8 @@
                         </h3>
                     </div>
 
-                    <!-- Clear Primary Status Pill -->
-                    <div>
+                    <!-- Clear Primary Status Pill & Cumulative Warning -->
+                    <div class="flex flex-wrap items-center gap-2">
                         @if($currentDue && $currentDue->isPaid())
                             <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/80">
                                 <svg class="w-4 h-4 text-emerald-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -52,12 +52,24 @@
                                 </svg>
                                 <span>Status: Lunas</span>
                             </span>
+                            @if($pastUnpaidWeeksCount > 0)
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-rose-50 text-rose-800 border border-rose-200" title="Anda memiliki pekan sebelum pekan ini yang belum disetor">
+                                    <span>&bull; {{ $pastUnpaidWeeksCount }} Pekan Lampau Tertunggak</span>
+                                </span>
+                            @endif
                         @elseif($currentDue && $currentDue->pendingPayment)
                             <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-50 text-amber-900 border border-amber-200/80">
                                 <svg class="w-4 h-4 text-amber-700 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                                 <span>Menunggu Verifikasi</span>
+                            </span>
+                        @elseif($currentDue && $currentDue->rejectedPayment)
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-50 text-rose-900 border border-rose-300">
+                                <svg class="w-4 h-4 text-rose-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                                <span>Setoran Ditolak</span>
                             </span>
                         @else
                             <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-50 text-rose-800 border border-rose-200/80">
@@ -70,6 +82,26 @@
                     </div>
                 </div>
 
+                <!-- Rejection Notice Banner (if any) -->
+                @if($currentDue && $currentDue->rejectedPayment && ! $currentDue->isPaid())
+                <div class="mt-4 p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-950 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs shadow-2xs">
+                    <div class="flex items-start gap-2.5">
+                        <svg class="w-5 h-5 text-rose-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                        <div>
+                            <span class="font-bold text-rose-900 block">Bukti Transfer Anda Ditolak oleh Bendahara</span>
+                            <p class="text-rose-800 mt-0.5">Catatan: <strong class="underline decoration-rose-300">{{ $currentDue->rejectedPayment->rejection_reason }}</strong></p>
+                        </div>
+                    </div>
+                    <button type="button" 
+                            @click="$dispatch('open-payment-modal', { due_id: {{ $currentDue->id }} })"
+                            class="px-3.5 py-1.5 rounded-lg bg-rose-700 hover:bg-rose-800 text-white font-semibold text-xs transition shrink-0 cursor-pointer self-start sm:self-auto shadow-2xs">
+                        Unggah Ulang Bukti &rarr;
+                    </button>
+                </div>
+                @endif
+
                 <!-- 2 Key Data Points: Nominal & Due Date -->
                 <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="bg-stone-50 p-4 rounded-lg border border-stone-100">
@@ -79,9 +111,11 @@
                         </span>
                         <span class="text-[11px] text-stone-400 mt-0.5 block">
                             @if($currentDue && $currentDue->isPaid())
-                                &bull; Pembayaran telah tercatat di kas kelas
+                                &bull; Pembayaran telah tercatat sah di kas kelas
                             @elseif($currentDue && $currentDue->pendingPayment)
                                 &bull; Bukti sedang diperiksa oleh bendahara
+                            @elseif($currentDue && $currentDue->rejectedPayment)
+                                &bull; Bukti sebelumnya ditolak, silakan kirim ulang
                             @else
                                 &bull; Menunggu pembayaran sebelum jatuh tempo
                             @endif
@@ -102,9 +136,16 @@
                 <!-- Contextual Guidance -->
                 <p class="text-xs text-stone-500 mt-4 leading-relaxed">
                     @if($currentDue && $currentDue->isPaid())
-                        Kewajiban kas Anda untuk <strong>{{ $activePeriod->name ?? 'pekan ini' }}</strong> telah diverifikasi lunas. Terima kasih atas partisipasi aktif Anda.
+                        Kewajiban kas Anda untuk <strong>{{ $activePeriod->name ?? 'pekan ini' }}</strong> telah diverifikasi lunas.
+                        @if($pastUnpaidWeeksCount > 0)
+                            Namun, mohon diperhatikan bahwa Anda masih memiliki <strong>{{ $pastUnpaidWeeksCount }} pekan lampau</strong> yang belum disetor.
+                        @else
+                            Terima kasih atas partisipasi aktif Anda dalam ketertiban kas kelas.
+                        @endif
                     @elseif($currentDue && $currentDue->pendingPayment)
                         Bukti setoran iuran kas untuk <strong>{{ $activePeriod->name ?? 'pekan ini' }}</strong> sudah kami terima. Bendahara akan segera memverifikasinya.
+                    @elseif($currentDue && $currentDue->rejectedPayment)
+                        Bukti setoran untuk <strong>{{ $activePeriod->name ?? 'pekan ini' }}</strong> sebelumnya belum dapat diterima. Silakan cek alasan penolakan dan unggah bukti baru.
                     @elseif($activePeriod)
                         Iuran kas kelas untuk <strong>{{ $activePeriod->name }}</strong> belum lunas. Silakan lakukan transfer atau setoran dan kirimkan bukti pembayarannya.
                     @else
@@ -118,12 +159,12 @@
                 @if($currentDue && $currentDue->isPaid())
                     @if($unpaidDues->count() > 0)
                         <button type="button" 
-                                @click="paymentModalOpen = true" 
+                                @click="$dispatch('open-payment-modal', {})" 
                                 class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-emerald-800 hover:bg-emerald-900 text-white font-semibold text-xs transition shadow-2xs cursor-pointer">
                             <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                             </svg>
-                            <span>Bayar Iuran Pekan Lain (Tersisa {{ $unpaidDues->count() }} Pekan)</span>
+                            <span>Bayar Iuran Pekan Lain (Tersisa {{ $unpaidDues->count() }} Pekan Tertunggak)</span>
                         </button>
                     @else
                         <div class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 font-semibold text-xs">
@@ -142,12 +183,12 @@
                     </div>
                 @else
                     <button type="button" 
-                            @click="paymentModalOpen = true" 
+                            @click="$dispatch('open-payment-modal', { due_id: {{ $currentDue?->id ?? 'null' }} })" 
                             class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-lg bg-emerald-800 hover:bg-emerald-900 text-white font-semibold text-xs transition shadow-xs cursor-pointer">
                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                         </svg>
-                        <span>Bayar Iuran Pekan Ini Sekarang</span>
+                        <span>{{ $currentDue && $currentDue->rejectedPayment ? 'Unggah Ulang Bukti Pekan Ini' : 'Bayar Iuran Pekan Ini Sekarang' }}</span>
                     </button>
                 @endif
 

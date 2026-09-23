@@ -66,25 +66,55 @@
             </div>
         </div>
 
-        <!-- Filter Tabs -->
+        <!-- Filter Tabs & Search -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
             <div class="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-                <a href="{{ route('mahasiswa.keuangan.index', ['type' => 'all']) }}"
+                <a href="{{ route('mahasiswa.keuangan.index', ['type' => 'all', 'search' => request('search')]) }}"
                    class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition {{ $type === 'all' ? 'bg-stone-900 text-white shadow-2xs' : 'bg-white text-stone-600 border border-stone-200 hover:bg-stone-50' }}">
                     Semua Transaksi
                 </a>
-                <a href="{{ route('mahasiswa.keuangan.index', ['type' => 'income']) }}"
+                <a href="{{ route('mahasiswa.keuangan.index', ['type' => 'income', 'search' => request('search')]) }}"
                    class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition {{ $type === 'income' ? 'bg-emerald-600 text-white shadow-2xs' : 'bg-white text-stone-600 border border-stone-200 hover:bg-stone-50' }}">
                     Pemasukan Saja
                 </a>
-                <a href="{{ route('mahasiswa.keuangan.index', ['type' => 'expense']) }}"
+                <a href="{{ route('mahasiswa.keuangan.index', ['type' => 'expense', 'search' => request('search')]) }}"
                    class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition {{ $type === 'expense' ? 'bg-rose-600 text-white shadow-2xs' : 'bg-white text-stone-600 border border-stone-200 hover:bg-stone-50' }}">
                     Pengeluaran Saja
                 </a>
             </div>
 
-            <div class="text-xs text-stone-500">
-                Menampilkan <span class="font-medium text-stone-800">{{ $transactions->total() }}</span> catatan transaksi
+            <div class="flex items-center gap-3">
+                <form method="GET" action="{{ route('mahasiswa.keuangan.index') }}" class="flex items-center gap-1.5">
+                    @if(request('type') && request('type') !== 'all')
+                        <input type="hidden" name="type" value="{{ request('type') }}">
+                    @endif
+                    <div class="relative">
+                        <input type="text"
+                               name="search"
+                               value="{{ request('search') }}"
+                               placeholder="Cari transaksi..."
+                               class="w-44 sm:w-56 pl-8 pr-7 py-1.5 text-xs rounded-lg border border-stone-200 bg-white placeholder-stone-400 focus:outline-none focus:ring-1 focus:ring-stone-400 focus:border-stone-400">
+                        <svg class="w-3.5 h-3.5 text-stone-400 absolute left-2.5 top-1/2 -translate-y-1/2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        @if(request('search'))
+                            <a href="{{ route('mahasiswa.keuangan.index', ['type' => request('type', 'all')]) }}"
+                               class="absolute right-2 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600"
+                               title="Reset pencarian">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </a>
+                        @endif
+                    </div>
+                    <button type="submit" class="px-2.5 py-1.5 bg-stone-100 hover:bg-stone-200 text-stone-700 text-xs font-medium rounded-lg border border-stone-200 transition cursor-pointer">
+                        Cari
+                    </button>
+                </form>
+
+                <div class="hidden md:block text-xs text-stone-500 whitespace-nowrap">
+                    <span class="font-medium text-stone-800">{{ $transactions->total() }}</span> data
+                </div>
             </div>
         </div>
 

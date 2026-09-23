@@ -1,16 +1,7 @@
 <x-layouts.app role="mahasiswa" title="Riwayat Pembayaran Kas">
 
     <div x-data="{
-        filter: 'semua',
-        selectDueForResubmit(dueId) {
-            this.paymentModalOpen = true;
-            this.$nextTick(() => {
-                const checkbox = document.querySelector(`input[name='student_due_ids[]'][value='${dueId}']`);
-                if (checkbox) {
-                    checkbox.checked = true;
-                }
-            });
-        }
+        filter: 'semua'
     }">
 
         <!-- Header & Action -->
@@ -25,7 +16,7 @@
 
                 <div class="flex items-center gap-2">
                     <button type="button" 
-                            @click="paymentModalOpen = true"
+                            @click="$dispatch('open-payment-modal')"
                             class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg text-white bg-emerald-800 hover:bg-emerald-900 transition shadow-2xs cursor-pointer">
                         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -230,7 +221,7 @@
 
                                         @if($p->isRejected() && $p->studentDue?->isUnpaid() && $p->studentDue?->pendingPayment === null)
                                             <button type="button" 
-                                                    @click="selectDueForResubmit({{ $dueId }})"
+                                                    @click="$dispatch('open-payment-modal', { due_id: {{ $dueId }} })"
                                                     class="py-1 px-2.5 text-[11px] font-semibold rounded bg-rose-700 hover:bg-rose-800 text-white transition shadow-2xs cursor-pointer">
                                                 Kirim Ulang Bukti &rarr;
                                             </button>
@@ -247,7 +238,7 @@
                                     <p class="font-medium text-stone-600 text-sm">Belum Ada Riwayat Pembayaran</p>
                                     <p class="text-xs text-stone-400 mt-1">Anda belum melakukan setoran iuran kas kelas.</p>
                                     <button type="button" 
-                                            @click="paymentModalOpen = true"
+                                            @click="$dispatch('open-payment-modal')"
                                             class="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg text-white bg-emerald-800 hover:bg-emerald-900 transition cursor-pointer">
                                         <span>Setor Kas Sekarang</span>
                                     </button>

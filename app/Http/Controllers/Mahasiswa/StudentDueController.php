@@ -28,7 +28,7 @@ class StudentDueController extends Controller
 
         // 2. All weekly obligations for this student
         $studentDues = StudentDue::where('user_id', $user->id)
-            ->with(['cashPeriod'])
+            ->with(['cashPeriod', 'pendingPayment', 'rejectedPayment'])
             ->get()
             ->sortBy(fn($d) => [
                 $d->cashPeriod->academic_year ?? '',

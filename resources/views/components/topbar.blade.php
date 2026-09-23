@@ -1,41 +1,48 @@
-@props(['role' => 'mahasiswa'])
+@props([
+    'role' => 'mahasiswa',
+    'title' => null,
+    'subtitle' => null,
+])
 
 @php
     $pendingVerificationCount = $role === 'bendahara' 
         ? \App\Models\Payment::where('status', 'pending')->count() 
         : (auth()->check() ? auth()->user()->studentDues()->where('status', 'unpaid')->count() : 0);
+
+    $displayTitle = $title ?? ($role === 'bendahara' ? 'Dashboard Bendahara' : 'Dashboard Mahasiswa');
+    $displaySubtitle = $subtitle ?? ($role === 'bendahara' ? 'Kelola kas kelas TI26A3 & verifikasi pembayaran' : 'Informasi iuran kas & keuangan kelas TI26A3');
 @endphp
 
 <header class="sticky top-0 z-20 bg-white border-b border-stone-200/80">
     <div class="px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         
         <!-- Left: Mobile Trigger & Page Context -->
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-3 min-w-0">
             <button type="button" 
                     @click="mobileMenuOpen = true" 
-                    class="md:hidden p-2 -ml-2 rounded-lg text-stone-600 hover:text-stone-900 hover:bg-stone-100 transition cursor-pointer"
+                    class="md:hidden p-2 -ml-2 rounded-lg text-stone-600 hover:text-stone-900 hover:bg-stone-100 transition cursor-pointer shrink-0"
                     aria-label="Buka Menu">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
             </button>
 
-            <div>
+            <div class="min-w-0">
                 <div class="flex items-center gap-2">
-                    <h1 class="text-base sm:text-lg font-semibold text-stone-900 tracking-tight">
-                        {{ $role === 'bendahara' ? 'Dashboard Bendahara' : 'Dashboard Mahasiswa' }}
+                    <h1 class="text-base sm:text-lg font-semibold text-stone-900 tracking-tight truncate">
+                        {{ $displayTitle }}
                     </h1>
                     @php
                         $activePeriodForTopbar = \App\Models\CashPeriod::where('is_active', true)->first();
                     @endphp
                     @if($activePeriodForTopbar)
-                    <span class="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded text-[11px] font-medium bg-stone-100 text-stone-600 border border-stone-200">
-                        {{ $activePeriodForTopbar->academic_year }} &bull; Semester {{ ucfirst($activePeriodForTopbar->semester) }}
+                    <span class="hidden lg:inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-stone-100 text-stone-600 border border-stone-200 shrink-0">
+                        {{ $activePeriodForTopbar->academic_year }} &bull; Smt {{ ucfirst($activePeriodForTopbar->semester) }}
                     </span>
                     @endif
                 </div>
-                <p class="text-xs text-stone-500 hidden sm:block">
-                    {{ $role === 'bendahara' ? 'Kelola kas kelas TI26A3 & verifikasi pembayaran' : 'Informasi iuran kas & keuangan kelas TI26A3' }}
+                <p class="text-xs text-stone-500 hidden sm:block truncate">
+                    {{ $displaySubtitle }}
                 </p>
             </div>
         </div>
@@ -72,7 +79,7 @@
             @endif
 
             <!-- Notification Bell -->
-            <a href="{{ $role === 'bendahara' ? '/bendahara/dashboard#verifikasi-pembayaran' : '/mahasiswa/dashboard#iuran-mingguan' }}" 
+            <a href="{{ $role === 'bendahara' ? route('bendahara.verifikasi.index') : route('mahasiswa.iuran.index') }}" 
                class="relative p-2 text-stone-500 hover:text-stone-800 hover:bg-stone-100 rounded-lg transition"
                title="{{ $role === 'bendahara' ? ($pendingVerificationCount . ' bukti transfer menunggu verifikasi') : ($pendingVerificationCount . ' iuran kas tertunggak') }}">
                 <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

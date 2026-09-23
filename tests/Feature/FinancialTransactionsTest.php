@@ -360,6 +360,39 @@ class FinancialTransactionsTest extends TestCase
         $response->assertSee('Rp 30.000'); // Net balance: 50k - 20k = 30k
     }
 
+    public function test_student_can_filter_and_search_financial_transparency_transactions(): void
+    {
+        FinancialTransaction::create([
+            'type' => 'income',
+            'amount' => '100000.00',
+            'transaction_date' => '2026-09-01',
+            'category' => 'Sponsorship',
+            'description' => 'Dana Sponsor Dies Natalis',
+            'created_by' => $this->bendahara->id,
+        ]);
+
+        FinancialTransaction::create([
+            'type' => 'expense',
+            'amount' => '25000.00',
+            'transaction_date' => '2026-09-05',
+            'category' => 'Konsumsi',
+            'description' => 'Snack Rapat Kelas',
+            'created_by' => $this->bendahara->id,
+        ]);
+
+        // Search for 'Sponsor'
+        $searchResponse = $this->actingAs($this->mahasiswa)->get(route('mahasiswa.keuangan.index', ['search' => 'Sponsor']));
+        $searchResponse->assertStatus(200);
+        $searchResponse->assertSee('Dana Sponsor Dies Natalis');
+        $searchResponse->assertDontSee('Snack Rapat Kelas');
+
+        // Search for 'Konsumsi'
+        $searchCategoryResponse = $this->actingAs($this->mahasiswa)->get(route('mahasiswa.keuangan.index', ['search' => 'Konsumsi']));
+        $searchCategoryResponse->assertStatus(200);
+        $searchCategoryResponse->assertSee('Snack Rapat Kelas');
+        $searchCategoryResponse->assertDontSee('Dana Sponsor Dies Natalis');
+    }
+
     public function test_student_cannot_create_edit_or_delete_transactions(): void
     {
         $tx = FinancialTransaction::create([

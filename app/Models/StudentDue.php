@@ -91,4 +91,20 @@ class StudentDue extends Model
     {
         return $this->hasOne(Payment::class)->where('status', 'pending');
     }
+
+    /**
+     * The most recent rejected payment (if any).
+     */
+    public function rejectedPayment(): HasOne
+    {
+        return $this->hasOne(Payment::class)->where('status', 'rejected')->latestOfMany('id');
+    }
+
+    /**
+     * The latest payment attempt for this due.
+     */
+    public function latestPayment(): HasOne
+    {
+        return $this->hasOne(Payment::class)->latestOfMany('id');
+    }
 }

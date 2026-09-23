@@ -19,11 +19,19 @@ class FinancialTransparencyController extends Controller
         $currentBalance = $totalIncome - $totalExpense;
 
         $type = $request->query('type', 'all');
+        $search = trim((string) $request->query('search', ''));
 
         $query = FinancialTransaction::with(['creator', 'payment.studentDue.cashPeriod']);
 
         if (in_array($type, ['income', 'expense'])) {
             $query->where('type', $type);
+        }
+
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
+                $q->where('description', 'like', "%{$search}%")
+                  ->orWhere('category', 'like', "%{$search}%");
+            });
         }
 
         $transactions = $query->latest('transaction_date')->latest('id')->paginate(15)->withQueryString();
@@ -33,7 +41,8 @@ class FinancialTransparencyController extends Controller
             'currentBalance',
             'totalIncome',
             'totalExpense',
-            'type'
+            'type',
+            'search'
         ));
     }
 }
