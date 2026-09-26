@@ -8,28 +8,28 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     
     <link rel="icon" type="image/png" href="{{ asset('images/logo-udb.png') }}">
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="h-full font-sans antialiased text-stone-800 bg-[#FAF9F5] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+<body class="h-full font-sans antialiased text-zinc-900 bg-[#FAF9F5] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
     
     <div class="sm:mx-auto sm:w-full sm:max-w-md px-4">
         <!-- Logo & Class Header -->
         <div class="text-center">
             <img src="{{ asset('images/logo-udb.png') }}" alt="Logo Universitas Duta Bangsa" class="w-16 h-16 object-contain mx-auto rounded-full shadow-xs">
-            <h2 class="mt-4 text-2xl font-bold tracking-tight text-stone-900">
+            <h2 class="mt-4 text-2xl font-bold tracking-tight text-zinc-900">
                 Masuk ke KASMA
             </h2>
-            <p class="mt-1 text-xs text-stone-500">
+            <p class="mt-1 text-xs text-zinc-500">
                 Sistem Manajemen Kas Kelas TI26A3 &bull; Universitas Duta Bangsa
             </p>
         </div>
 
         <!-- Login Card -->
-        <div class="mt-8 bg-white py-8 px-6 shadow-xs border border-stone-200/90 rounded-2xl sm:px-8">
+        <div class="mt-7 bg-white py-8 px-6 shadow-xs border border-zinc-200 rounded-2xl sm:px-8">
             
             <!-- Global / Session Error Message -->
             @if ($errors->any())
@@ -52,7 +52,7 @@
 
                 <!-- Login (Email or NIM) -->
                 <div>
-                    <label for="login" class="block text-xs font-semibold text-stone-700 uppercase tracking-wider mb-1.5">
+                    <label for="login" class="block text-xs font-semibold text-zinc-700 uppercase tracking-wider mb-1.5">
                         Email atau NIM Mahasiswa
                     </label>
                     <input id="login" 
@@ -63,13 +63,13 @@
                            autofocus 
                            autocomplete="username"
                            placeholder="nama@kasma.edu atau 220401"
-                           class="w-full px-3.5 py-2.5 rounded-lg bg-stone-50/50 border border-stone-300 text-stone-900 text-sm placeholder-stone-400 focus:bg-white focus:outline-none focus:border-stone-800 focus:ring-1 focus:ring-stone-800 transition">
+                           class="w-full px-3.5 py-2.5 rounded-lg bg-white border border-zinc-300 text-zinc-900 text-sm placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition">
                 </div>
 
                 <!-- Password with Show/Hide Toggle -->
                 <div x-data="{ showPassword: false }">
                     <div class="flex items-center justify-between mb-1.5">
-                        <label for="password" class="block text-xs font-semibold text-stone-700 uppercase tracking-wider">
+                        <label for="password" class="block text-xs font-semibold text-zinc-700 uppercase tracking-wider">
                             Kata Sandi
                         </label>
                     </div>
@@ -81,10 +81,10 @@
                                required 
                                autocomplete="current-password"
                                placeholder="••••••••"
-                               class="w-full px-3.5 py-2.5 pr-10 rounded-lg bg-stone-50/50 border border-stone-300 text-stone-900 text-sm placeholder-stone-400 focus:bg-white focus:outline-none focus:border-stone-800 focus:ring-1 focus:ring-stone-800 transition">
+                               class="w-full px-3.5 py-2.5 pr-10 rounded-lg bg-white border border-zinc-300 text-zinc-900 text-sm placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition">
                         <button type="button" 
                                 @click="showPassword = !showPassword"
-                                class="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600 focus:outline-none cursor-pointer"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 focus:outline-none cursor-pointer"
                                 :title="showPassword ? 'Sembunyikan kata sandi' : 'Tampilkan kata sandi'">
                             <!-- Eye icon (when hidden) -->
                             <svg x-show="!showPassword" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -104,15 +104,15 @@
                     <label class="flex items-center gap-2 cursor-pointer select-none">
                         <input type="checkbox" 
                                name="remember" 
-                               class="w-4 h-4 rounded border-stone-300 text-stone-900 focus:ring-stone-800">
-                        <span class="text-xs text-stone-600">Ingat sesi saya</span>
+                               class="w-4 h-4 rounded border-zinc-300 text-zinc-900 focus:ring-zinc-900">
+                        <span class="text-xs text-zinc-600">Ingat sesi saya</span>
                     </label>
                 </div>
 
                 <!-- Submit Button -->
                 <div class="pt-2">
                     <button type="submit" 
-                            class="w-full py-2.5 px-4 rounded-lg bg-stone-900 hover:bg-stone-800 text-white font-semibold text-sm transition shadow-2xs focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-stone-900 cursor-pointer">
+                            class="w-full py-2.5 px-4 rounded-lg bg-zinc-900 hover:bg-zinc-800 text-white font-semibold text-sm transition shadow-xs focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-zinc-900 cursor-pointer">
                         Masuk
                     </button>
                 </div>
@@ -120,26 +120,26 @@
 
             <!-- Demo Account Credentials Helper -->
             @if (app()->environment('local', 'testing'))
-                <div class="mt-6 pt-5 border-t border-stone-100">
-                    <p class="text-[11px] font-semibold uppercase tracking-wider text-stone-400 mb-2.5">Akun Uji Coba (Klik untuk Isi Otomatis)</p>
+                <div class="mt-6 pt-5 border-t border-zinc-100">
+                    <p class="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 mb-2.5">Akun Uji Coba (Klik untuk Isi Otomatis)</p>
                     <div class="space-y-2 text-xs">
                         <div role="button"
                              onclick="document.getElementById('login').value = 'bendahara@kasma.edu'; document.getElementById('password').value = 'password';"
-                             class="p-2.5 rounded-lg bg-stone-50 hover:bg-stone-100 border border-stone-200/80 flex items-center justify-between cursor-pointer transition">
+                             class="p-2.5 rounded-lg bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 flex items-center justify-between cursor-pointer transition">
                             <div>
-                                <span class="font-semibold text-stone-900 block text-[11px]">Bendahara Kelas</span>
-                                <span class="font-mono text-stone-500 text-[10px]">bendahara@kasma.edu</span>
+                                <span class="font-semibold text-zinc-900 block text-[11px]">Bendahara Kelas</span>
+                                <span class="font-mono text-zinc-500 text-[10px]">bendahara@kasma.edu</span>
                             </div>
-                            <span class="text-[10px] font-mono text-stone-600 bg-white border border-stone-200 px-1.5 py-0.5 rounded shadow-2xs">Gunakan &rarr;</span>
+                            <span class="text-[10px] font-mono text-zinc-600 bg-white border border-zinc-200 px-1.5 py-0.5 rounded shadow-2xs">Gunakan &rarr;</span>
                         </div>
                         <div role="button"
                              onclick="document.getElementById('login').value = '220401'; document.getElementById('password').value = 'password';"
-                             class="p-2.5 rounded-lg bg-stone-50 hover:bg-stone-100 border border-stone-200/80 flex items-center justify-between cursor-pointer transition">
+                             class="p-2.5 rounded-lg bg-zinc-50 hover:bg-zinc-100 border border-zinc-200 flex items-center justify-between cursor-pointer transition">
                             <div>
-                                <span class="font-semibold text-stone-900 block text-[11px]">Mahasiswa (Hafizh)</span>
-                                <span class="font-mono text-stone-500 text-[10px]">NIM: 220401 atau hafizh@kasma.edu</span>
+                                <span class="font-semibold text-zinc-900 block text-[11px]">Mahasiswa (Hafizh)</span>
+                                <span class="font-mono text-zinc-500 text-[10px]">NIM: 220401 atau hafizh@kasma.edu</span>
                             </div>
-                            <span class="text-[10px] font-mono text-stone-600 bg-white border border-stone-200 px-1.5 py-0.5 rounded shadow-2xs">Gunakan &rarr;</span>
+                            <span class="text-[10px] font-mono text-zinc-600 bg-white border border-zinc-200 px-1.5 py-0.5 rounded shadow-2xs">Gunakan &rarr;</span>
                         </div>
                     </div>
                 </div>
@@ -147,7 +147,7 @@
 
         </div>
 
-        <p class="mt-6 text-center text-xs text-stone-400">
+        <p class="mt-6 text-center text-xs text-zinc-400">
             KASMA &bull; Class Cash Management System &bull; Semester Genap 2025/2026
         </p>
     </div>
