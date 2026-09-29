@@ -122,7 +122,7 @@ Route::middleware(['auth', 'role:bendahara'])
         Route::put('/mahasiswa/{mahasiswa}', [StudentManagementController::class, 'update'])->name('mahasiswa.update');
         Route::delete('/mahasiswa/{mahasiswa}', [StudentManagementController::class, 'destroy'])->name('mahasiswa.destroy');
         Route::patch('/mahasiswa/{mahasiswa}/toggle-status', [StudentManagementController::class, 'toggleStatus'])->name('mahasiswa.toggle-status');
-        Route::post('/mahasiswa/{mahasiswa}/resend-activation', [StudentManagementController::class, 'resendActivation'])->name('mahasiswa.resend-activation');
+        Route::match(['get', 'post'], '/mahasiswa/{mahasiswa}/resend-activation', [StudentManagementController::class, 'resendActivation'])->name('mahasiswa.resend-activation');
 
         // Reports / Laporan & Export
         Route::get('/laporan', [ReportController::class, 'index'])->name('laporan.index');

@@ -4,6 +4,10 @@ FROM richarvey/nginx-php-fpm:latest
 RUN apk --no-cache add postgresql-dev \
     && docker-php-ext-install pdo_pgsql
 
+# Configure Nginx FastCGI buffers to prevent 502 Bad Gateway
+RUN mkdir -p /etc/nginx/conf.d \
+    && echo "fastcgi_buffer_size 128k; fastcgi_buffers 4 256k; fastcgi_busy_buffers_size 256k;" > /etc/nginx/conf.d/fastcgi_buffer.conf
+
 # Copy project files
 COPY . .
 

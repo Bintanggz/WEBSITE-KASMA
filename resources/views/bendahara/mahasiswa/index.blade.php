@@ -451,7 +451,7 @@
             $actName = $act['name'] ?? '';
             $rawPhone = $act['phone_number'] ?? $act['phone'] ?? '';
             $actPhone = \App\Models\User::formatWhatsappNumber($rawPhone);
-            $actMsg = $act['whatsapp_message'] ?? "Halo {$actName}, Anda telah didaftarkan pada KASMA (Sistem Kas Mahasiswa TI26A3). Silakan klik tautan berikut untuk membuat kata sandi akun Anda (berlaku 72 jam):\n\n{$actUrl}\n\nTerima kasih!";
+            $actMsg = "Halo {$actName},\n\nAkun KASMA Anda telah didaftarkan oleh Bendahara Kelas TI26A3.\nSilakan klik tautan berikut untuk membuat kata sandi dan mengaktifkan akun Anda:\n\n{$actUrl}\n\nTautan ini berlaku selama 72 jam. Terima kasih!";
         @endphp
         <div x-show="activationModalOpen" 
              x-cloak 
@@ -501,7 +501,7 @@
                         </a>
 
                         <button type="button" 
-                                @click="copyToClipboard(`{{ addslashes($actMsg) }}`, true)" 
+                                @click="copyToClipboard({{ \Illuminate\Support\Js::from($actMsg) }}, true)" 
                                 class="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg border border-zinc-200 bg-white hover:bg-zinc-50 text-zinc-700 font-medium text-xs transition cursor-pointer">
                             <span x-text="copiedMsg ? 'Teks Pesan Berhasil Tersalin!' : 'Salin Format Pesan Lengkap'"></span>
                         </button>

@@ -3,6 +3,10 @@ set -e
 
 cd /var/www/html
 
+echo "--- 0. Ensuring Nginx FastCGI buffer sizes ---"
+mkdir -p /etc/nginx/conf.d
+echo "fastcgi_buffer_size 128k; fastcgi_buffers 4 256k; fastcgi_busy_buffers_size 256k;" > /etc/nginx/conf.d/fastcgi_buffer.conf || true
+
 echo "--- 1. Ensuring permissions ---"
 chmod -R 777 storage bootstrap/cache
 

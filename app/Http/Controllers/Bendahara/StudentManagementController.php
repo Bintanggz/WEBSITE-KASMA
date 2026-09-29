@@ -122,7 +122,6 @@ class StudentManagementController extends Controller
                 'phone' => $student->phone_number,
                 'activation_url' => $activationUrl,
                 'url' => $activationUrl,
-                'whatsapp_message' => $waMessage,
             ]);
     }
 
@@ -230,7 +229,6 @@ class StudentManagementController extends Controller
                 'phone' => $mahasiswa->phone_number,
                 'activation_url' => $activationUrl,
                 'url' => $activationUrl,
-                'whatsapp_message' => $waMessage,
             ]);
     }
 }
