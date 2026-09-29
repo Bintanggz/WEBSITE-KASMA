@@ -100,6 +100,8 @@ class User extends Authenticatable
         $clean = preg_replace('/[^0-9]/', '', $phone);
         if (str_starts_with($clean, '0')) {
             $clean = '62' . substr($clean, 1);
+        } elseif (str_starts_with($clean, '8')) {
+            $clean = '62' . $clean;
         }
 
         return $clean;

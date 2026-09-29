@@ -696,4 +696,35 @@ class StudentManagementTest extends TestCase
         $this->assertEquals(0, FinancialTransaction::count());
         $this->assertTrue(User::where('role', 'bendahara')->exists());
     }
+
+    public function test_user_format_whatsapp_number_handles_various_formats(): void
+    {
+        $this->assertEquals('6285601546818', User::formatWhatsappNumber('0856-0154-6818'));
+        $this->assertEquals('6285601546818', User::formatWhatsappNumber('+62 856-0154-6818'));
+        $this->assertEquals('6285601546818', User::formatWhatsappNumber('856-0154-6818'));
+        $this->assertEquals('6285601546818', User::formatWhatsappNumber('6285601546818'));
+        $this->assertEquals('', User::formatWhatsappNumber(null));
+    }
+
+    public function test_pending_activation_student_shows_whatsapp_activation_button_in_table(): void
+    {
+        $pendingStudent = User::create([
+            'name' => 'Arroziqin Kholifah',
+            'nim' => '260103066',
+            'email' => 'arrozi@gmail.com',
+            'phone_number' => '+62 856-0154-6818',
+            'role' => 'mahasiswa',
+            'password' => null,
+            'is_active' => true,
+            'activation_token' => hash('sha256', Str::random(64)),
+            'activation_expires_at' => now()->addHours(72),
+            'activated_at' => null,
+        ]);
+
+        $response = $this->actingAs($this->treasurer)->get(route('bendahara.mahasiswa.index'));
+        $response->assertOk();
+        $response->assertSee('Arroziqin Kholifah');
+        $response->assertSee('Menunggu Aktivasi');
+        $response->assertSee('Kirim Tautan WA');
+    }
 }
