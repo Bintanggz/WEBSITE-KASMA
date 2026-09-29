@@ -22,6 +22,7 @@ class UpdateProfileRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'name' => ['required', 'string', 'max:255'],
             'phone_number' => ['nullable', 'string', 'max:20', 'regex:/^[0-9+\s\-]+$/'],
         ];
     }
@@ -34,6 +35,7 @@ class UpdateProfileRequest extends FormRequest
     public function attributes(): array
     {
         return [
+            'name' => 'nama lengkap',
             'phone_number' => 'nomor WhatsApp / telepon',
         ];
     }

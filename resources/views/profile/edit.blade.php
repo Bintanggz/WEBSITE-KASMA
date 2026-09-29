@@ -54,15 +54,34 @@
             <div class="bg-white rounded-xl border border-zinc-200 shadow-xs p-5 sm:p-6 space-y-5">
                 <div class="border-b border-zinc-200 pb-3">
                     <h3 class="text-sm font-bold text-zinc-900">Identitas &amp; Kontak</h3>
-                    <p class="text-xs text-zinc-500 mt-0.5">Data identitas mahasiswa dan nomor WhatsApp aktif</p>
+                    <p class="text-xs text-zinc-500 mt-0.5">
+                        {{ $user->isBendahara() ? 'Perbarui nama bendahara dan kontak WhatsApp aktif' : 'Data identitas mahasiswa dan nomor WhatsApp aktif' }}
+                    </p>
                 </div>
 
-                <div class="space-y-3.5 text-xs">
+                <form method="POST" action="{{ route('profile.update') }}" class="space-y-4 text-xs">
+                    @csrf
+                    @method('PATCH')
+
                     <div>
-                        <span class="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider block mb-1">Nama Lengkap</span>
-                        <div class="p-2.5 rounded-lg bg-zinc-50 border border-zinc-200 text-zinc-900 font-semibold">
-                            {{ $user->name }}
-                        </div>
+                        <label for="name" class="text-[11px] font-semibold text-zinc-700 uppercase tracking-wider block mb-1">
+                            Nama Lengkap <span class="text-rose-500">*</span>
+                        </label>
+                        <input type="text"
+                               id="name"
+                               name="name"
+                               value="{{ old('name', $user->name) }}"
+                               required
+                               placeholder="Masukkan nama lengkap"
+                               class="w-full px-3.5 py-2 text-xs rounded-lg border border-zinc-300 bg-white text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition">
+                        @if($user->isBendahara())
+                            <p class="text-[10px] text-zinc-500 mt-1">
+                                Nama ini akan ditampilkan pada dashboard kelas, laporan keuangan, dan kontak bendahara.
+                            </p>
+                        @endif
+                        @error('name')
+                            <p class="text-[11px] text-rose-600 mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
 
                     @if($user->nim)
@@ -81,36 +100,33 @@
                         </div>
                     </div>
 
-                    <!-- Update Phone Number Form -->
-                    <form method="POST" action="{{ route('profile.update') }}" class="pt-2 border-t border-zinc-200 space-y-3">
-                        @csrf
-                        @method('PATCH')
-
-                        <div>
-                            <label for="phone_number" class="text-[11px] font-semibold text-zinc-700 uppercase tracking-wider block mb-1">
-                                Nomor WhatsApp / Telepon
-                            </label>
-                            <div class="relative">
-                                <input type="text"
-                                       id="phone_number"
-                                       name="phone_number"
-                                       value="{{ old('phone_number', $user->phone_number) }}"
-                                       placeholder="Contoh: 081234567890"
-                                       class="w-full px-3.5 py-2 text-xs rounded-lg border border-zinc-300 bg-white text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition">
-                            </div>
-                            <p class="text-[10px] text-zinc-500 mt-1">
-                                Digunakan untuk konfirmasi setoran kas dan pengingat tagihan via WhatsApp.
-                            </p>
+                    <div>
+                        <label for="phone_number" class="text-[11px] font-semibold text-zinc-700 uppercase tracking-wider block mb-1">
+                            Nomor WhatsApp / Telepon
+                        </label>
+                        <div class="relative">
+                            <input type="text"
+                                   id="phone_number"
+                                   name="phone_number"
+                                   value="{{ old('phone_number', $user->phone_number) }}"
+                                   placeholder="Contoh: 081234567890"
+                                   class="w-full px-3.5 py-2 text-xs rounded-lg border border-zinc-300 bg-white text-zinc-900 placeholder-zinc-400 focus:outline-none focus:border-zinc-900 focus:ring-1 focus:ring-zinc-900 transition">
                         </div>
+                        <p class="text-[10px] text-zinc-500 mt-1">
+                            Digunakan untuk konfirmasi setoran kas dan pengingat tagihan via WhatsApp.
+                        </p>
+                        @error('phone_number')
+                            <p class="text-[11px] text-rose-600 mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                        <div class="pt-1">
-                            <button type="submit"
-                                    class="px-4 py-2 text-xs font-semibold rounded-lg bg-zinc-900 hover:bg-zinc-800 text-white transition shadow-xs cursor-pointer">
-                                Simpan Perubahan Kontak
-                            </button>
-                        </div>
-                    </form>
-                </div>
+                    <div class="pt-2 border-t border-zinc-200">
+                        <button type="submit"
+                                class="px-4 py-2 text-xs font-semibold rounded-lg bg-zinc-900 hover:bg-zinc-800 text-white transition shadow-xs cursor-pointer">
+                            Simpan Perubahan Profil
+                        </button>
+                    </div>
+                </form>
             </div>
 
             <!-- Card 2: Ubah Kata Sandi Akun -->

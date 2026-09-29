@@ -40,10 +40,11 @@ class ProfileController extends Controller
         $user = auth()->user();
 
         $user->update([
+            'name' => $request->validated('name'),
             'phone_number' => $request->validated('phone_number'),
         ]);
 
-        return redirect()->route('profile.edit')->with('success', 'Nomor WhatsApp / kontak berhasil diperbarui.');
+        return redirect()->route('profile.edit')->with('success', 'Profil dan informasi kontak berhasil diperbarui.');
     }
 
     /**

@@ -176,11 +176,11 @@
             <a href="{{ route('profile.edit') }}" class="flex items-center justify-between p-2 rounded-lg hover:bg-zinc-50 transition group cursor-pointer" title="Pengaturan Profil & Sandi">
                 <div class="flex items-center gap-2.5 min-w-0">
                     <div class="w-7 h-7 rounded-full bg-zinc-100 text-zinc-700 flex items-center justify-center font-semibold text-xs border border-zinc-200 shrink-0">
-                        {{ strtoupper(substr(auth()->user()->name ?? ($role === 'bendahara' ? 'Nadya' : 'Hafizh'), 0, 2)) }}
+                        {{ strtoupper(substr(auth()->user()->name ?? ($role === 'bendahara' ? 'Bendahara' : 'Mahasiswa'), 0, 2)) }}
                     </div>
                     <div class="min-w-0">
                         <p class="text-xs font-semibold text-zinc-900 truncate">
-                            {{ auth()->user()->name ?? ($role === 'bendahara' ? 'Nadya Putri' : 'Hafizh Al-Fatih') }}
+                            {{ auth()->user()->name ?? ($role === 'bendahara' ? 'Bendahara Kelas' : 'Mahasiswa') }}
                         </p>
                         <p class="text-[10px] text-zinc-500 truncate">
                             @if(auth()->user()?->isMahasiswa() || $role === 'mahasiswa')

@@ -205,7 +205,7 @@
                     <p class="font-bold text-zinc-900">Bendahara Kelas TI26A3</p>
                     <div class="h-20"></div>
                     <p class="font-bold text-zinc-900 border-b border-zinc-800 pb-0.5 inline-block min-w-40">
-                        {{ $bendahara->name ?? 'Nadya Putri' }}
+                        {{ $bendahara->name ?? 'Bendahara Kelas TI26A3' }}
                     </p>
                     <p class="text-[10px] text-zinc-500 font-mono mt-0.5">NIM. {{ $bendahara->nim ?? '220400' }}</p>
                 </div>

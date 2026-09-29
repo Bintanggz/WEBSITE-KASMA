@@ -30,9 +30,10 @@ return new class extends Migration
         DB::table('users')->where('role', 'mahasiswa')->delete();
 
         // 5. Ensure at least one active Bendahara account exists
-        if (! DB::table('users')->where('role', 'bendahara')->exists()) {
+        $bendahara = DB::table('users')->where('role', 'bendahara')->first();
+        if (! $bendahara) {
             DB::table('users')->insert([
-                'name' => 'Nadya Putri',
+                'name' => 'Bendahara TI26A3',
                 'nim' => '220400',
                 'email' => 'bendahara@kasma.edu',
                 'password' => Hash::make('password'),
@@ -42,6 +43,10 @@ return new class extends Migration
                 'activated_at' => now(),
                 'created_at' => now(),
                 'updated_at' => now(),
+            ]);
+        } elseif ($bendahara->name === 'Nadya Putri') {
+            DB::table('users')->where('id', $bendahara->id)->update([
+                'name' => 'Bendahara TI26A3',
             ]);
         }
 

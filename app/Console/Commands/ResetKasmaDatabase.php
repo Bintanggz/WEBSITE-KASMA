@@ -65,7 +65,7 @@ class ResetKasmaDatabase extends Command
             // 5. Ensure at least one active Bendahara account exists
             if (! DB::table('users')->where('role', 'bendahara')->exists()) {
                 DB::table('users')->insert([
-                    'name' => 'Nadya Putri',
+                    'name' => 'Bendahara TI26A3',
                     'nim' => '220400',
                     'email' => 'bendahara@kasma.edu',
                     'password' => Hash::make('password'),

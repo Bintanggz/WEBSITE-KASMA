@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
         // 1. Create Default Bendahara Account if not exists
         if (! User::where('role', 'bendahara')->exists()) {
             User::create([
-                'name' => 'Nadya Putri',
+                'name' => 'Bendahara TI26A3',
                 'nim' => '220400',
                 'email' => 'bendahara@kasma.edu',
                 'password' => Hash::make('password'),

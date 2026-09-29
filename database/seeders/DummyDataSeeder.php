@@ -24,7 +24,7 @@ class DummyDataSeeder extends Seeder
         $bendahara = User::where('role', 'bendahara')->first();
         if (! $bendahara) {
             $bendahara = User::create([
-                'name' => 'Nadya Putri',
+                'name' => 'Bendahara TI26A3',
                 'nim' => '220400',
                 'email' => 'bendahara@kasma.edu',
                 'password' => Hash::make('password'),

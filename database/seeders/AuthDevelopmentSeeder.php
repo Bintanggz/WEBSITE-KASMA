@@ -17,7 +17,7 @@ class AuthDevelopmentSeeder extends Seeder
         User::updateOrCreate(
             ['email' => 'bendahara@kasma.edu'],
             [
-                'name' => 'Nadya Putri',
+                'name' => 'Bendahara TI26A3',
                 'nim' => '220400',
                 'password' => Hash::make('password'),
                 'role' => 'bendahara',

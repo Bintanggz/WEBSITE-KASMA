@@ -64,9 +64,10 @@ class ProfileManagementTest extends TestCase
         $response->assertSee('Bendahara Kas Kelas');
     }
 
-    public function test_user_can_update_phone_number(): void
+    public function test_user_can_update_profile_and_phone_number(): void
     {
         $response = $this->actingAs($this->mahasiswa)->patch(route('profile.update'), [
+            'name' => 'Hafizh Al-Fatih Update',
             'phone_number' => '089876543210',
         ]);
 
@@ -74,7 +75,38 @@ class ProfileManagementTest extends TestCase
         $response->assertSessionHas('success');
 
         $this->mahasiswa->refresh();
+        $this->assertEquals('Hafizh Al-Fatih Update', $this->mahasiswa->name);
         $this->assertEquals('089876543210', $this->mahasiswa->phone_number);
+    }
+
+    public function test_treasurer_can_update_their_name(): void
+    {
+        $response = $this->actingAs($this->bendahara)->patch(route('profile.update'), [
+            'name' => 'Siti Bendahara Asli',
+            'phone_number' => '081234567899',
+        ]);
+
+        $response->assertRedirect(route('profile.edit'));
+        $response->assertSessionHas('success');
+
+        $this->bendahara->refresh();
+        $this->assertEquals('Siti Bendahara Asli', $this->bendahara->name);
+        $this->assertEquals('081234567899', $this->bendahara->phone_number);
+
+        // Verify dashboard reflects new name
+        $dashboardResponse = $this->actingAs($this->bendahara)->get(route('bendahara.dashboard'));
+        $dashboardResponse->assertStatus(200);
+        $dashboardResponse->assertSee('Siti Bendahara Asli');
+    }
+
+    public function test_user_cannot_update_profile_with_empty_name(): void
+    {
+        $response = $this->actingAs($this->bendahara)->patch(route('profile.update'), [
+            'name' => '',
+            'phone_number' => '081234567899',
+        ]);
+
+        $response->assertSessionHasErrors('name');
     }
 
     public function test_user_can_change_password_with_valid_current_password(): void
