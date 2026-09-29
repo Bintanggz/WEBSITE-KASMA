@@ -27,10 +27,11 @@ class StudentManagementController extends Controller
         $query = User::where('role', 'mahasiswa');
 
         if (! empty($search)) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'ilike', "%{$search}%")
-                    ->orWhere('nim', 'ilike', "%{$search}%")
-                    ->orWhere('email', 'ilike', "%{$search}%");
+            $operator = DB::connection()->getDriverName() === 'pgsql' ? 'ilike' : 'like';
+            $query->where(function ($q) use ($search, $operator) {
+                $q->where('name', $operator, "%{$search}%")
+                    ->orWhere('nim', $operator, "%{$search}%")
+                    ->orWhere('email', $operator, "%{$search}%");
             });
         }
 
@@ -116,7 +117,9 @@ class StudentManagementController extends Controller
                 'nim' => $student->nim,
                 'email' => $student->email,
                 'phone_number' => $student->phone_number,
+                'phone' => $student->phone_number,
                 'activation_url' => $activationUrl,
+                'url' => $activationUrl,
                 'whatsapp_message' => $waMessage,
             ]);
     }
@@ -190,7 +193,9 @@ class StudentManagementController extends Controller
                 'nim' => $mahasiswa->nim,
                 'email' => $mahasiswa->email,
                 'phone_number' => $mahasiswa->phone_number,
+                'phone' => $mahasiswa->phone_number,
                 'activation_url' => $activationUrl,
+                'url' => $activationUrl,
                 'whatsapp_message' => $waMessage,
             ]);
     }

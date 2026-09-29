@@ -81,6 +81,39 @@ class User extends Authenticatable
     }
 
     /**
+     * Attribute accessor for is_activated so both method and property access work.
+     */
+    public function getIsActivatedAttribute(): bool
+    {
+        return $this->isActivated();
+    }
+
+    /**
+     * Format a phone number into international format for WhatsApp (e.g. 0812 -> 62812).
+     */
+    public static function formatWhatsappNumber(?string $phone): string
+    {
+        if (empty($phone)) {
+            return '';
+        }
+
+        $clean = preg_replace('/[^0-9]/', '', $phone);
+        if (str_starts_with($clean, '0')) {
+            $clean = '62' . substr($clean, 1);
+        }
+
+        return $clean;
+    }
+
+    /**
+     * Get the student's formatted WhatsApp number.
+     */
+    public function getWhatsappNumberAttribute(): string
+    {
+        return self::formatWhatsappNumber($this->phone_number);
+    }
+
+    /**
      * Determine if the user has an activation pending.
      */
     public function hasPendingActivation(): bool

@@ -125,7 +125,7 @@
                     <tbody class="divide-y divide-zinc-100">
                         @forelse($students as $student)
                             @php
-                                $isActivated = $student->is_activated;
+                                $isActivated = $student->isActivated();
                                 $isActive = $student->is_active;
                             @endphp
                             <tr class="hover:bg-zinc-50/50 transition">
@@ -143,8 +143,9 @@
                                 </td>
                                 <td class="py-3.5 px-4 whitespace-nowrap">
                                     @if($student->phone_number)
-                                        <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $student->phone_number) }}" 
+                                        <a href="https://wa.me/{{ $student->whatsapp_number }}" 
                                            target="_blank" 
+                                           rel="noopener noreferrer"
                                            class="text-zinc-700 hover:text-emerald-700 font-mono inline-flex items-center gap-1 transition">
                                             <span>{{ $student->phone_number }}</span>
                                         </a>
@@ -386,10 +387,11 @@
         @if(session('new_student_activation'))
         @php
             $act = session('new_student_activation');
-            $actUrl = $act['url'];
-            $actName = $act['name'];
-            $actPhone = preg_replace('/[^0-9]/', '', $act['phone'] ?? '');
-            $actMsg = "Halo {$actName}, Anda telah didaftarkan pada KASMA (Sistem Kas Mahasiswa TI26A3). Silakan klik tautan berikut untuk membuat kata sandi akun Anda (berlaku 72 jam):\n\n{$actUrl}\n\nTerima kasih!";
+            $actUrl = $act['activation_url'] ?? $act['url'] ?? '';
+            $actName = $act['name'] ?? '';
+            $rawPhone = $act['phone_number'] ?? $act['phone'] ?? '';
+            $actPhone = \App\Models\User::formatWhatsappNumber($rawPhone);
+            $actMsg = $act['whatsapp_message'] ?? "Halo {$actName}, Anda telah didaftarkan pada KASMA (Sistem Kas Mahasiswa TI26A3). Silakan klik tautan berikut untuk membuat kata sandi akun Anda (berlaku 72 jam):\n\n{$actUrl}\n\nTerima kasih!";
         @endphp
         <div x-show="activationModalOpen" 
              x-cloak 

@@ -397,7 +397,7 @@
                         <p class="font-medium text-zinc-800 text-xs">{{ $bendaharaContact->name ?? 'Bendahara Kelas' }}</p>
                         <p class="text-[10px] text-zinc-400 font-mono">{{ $bendaharaContact->phone_number ?? '0821-9876-5432' }}</p>
                     </div>
-                    <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $bendaharaContact->phone_number ?? '6282198765432') }}?text={{ urlencode('Halo Bendahara KASMA, saya ' . $user->name . ' (NIM ' . ($user->nim ?? '-') . ') ingin konfirmasi terkait iuran kas.') }}" 
+                    <a href="https://wa.me/{{ \App\Models\User::formatWhatsappNumber($bendaharaContact->phone_number ?? '6282198765432') }}?text={{ urlencode('Halo Bendahara KASMA, saya ' . $user->name . ' (NIM ' . ($user->nim ?? '-') . ') ingin konfirmasi terkait iuran kas.') }}" 
                        target="_blank" 
                        rel="noopener noreferrer" 
                        class="text-[11px] text-emerald-700 hover:text-emerald-900 font-medium bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-2 py-1 rounded transition cursor-pointer">

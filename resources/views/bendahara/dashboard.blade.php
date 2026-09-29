@@ -192,7 +192,7 @@
                         @forelse($unpaidStudents as $index => $due)
                             @php
                                 $student = $due->user;
-                                $cleanPhone = preg_replace('/[^0-9]/', '', $student->phone_number ?? '6280000000000');
+                                $cleanPhone = \App\Models\User::formatWhatsappNumber($student->phone_number ?? '');
                                 $reminderMsg = "Halo {$student->name}, mengingatkan bahwa iuran kas kelas TI26A3 untuk {$activePeriod->name} sebesar Rp " . number_format($due->amount, 0, ',', '.') . " belum tercatat lunas. Mohon segera transfer ke BCA 873-019-2819 a.n Bendahara Kas TI26A3. Terima kasih!";
                             @endphp
                             <div class="p-3.5 flex items-center justify-between hover:bg-zinc-50/50 transition">
@@ -211,12 +211,16 @@
                                     <span class="font-mono font-medium text-rose-600">
                                         Rp {{ number_format($due->amount, 0, ',', '.') }}
                                     </span>
+                                    @if($cleanPhone)
                                     <a href="https://wa.me/{{ $cleanPhone }}?text={{ urlencode($reminderMsg) }}" 
                                        target="_blank" 
                                        rel="noopener noreferrer" 
                                        class="text-[11px] px-2 py-0.5 rounded bg-zinc-100 hover:bg-emerald-50 hover:text-emerald-800 text-zinc-700 transition font-medium cursor-pointer">
                                         WA
                                     </a>
+                                    @else
+                                    <span class="text-[10px] text-zinc-400 font-mono">-</span>
+                                    @endif
                                 </div>
                             </div>
                         @empty

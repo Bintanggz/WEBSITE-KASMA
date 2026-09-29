@@ -545,4 +545,89 @@ class StudentManagementTest extends TestCase
         $response->assertRedirect('/bendahara/dashboard');
         $this->assertAuthenticatedAs($this->treasurer);
     }
+
+    public function test_bendahara_adding_student_renders_activation_modal_without_view_errors(): void
+    {
+        $response = $this->actingAs($this->treasurer)->followingRedirects()->post(route('bendahara.mahasiswa.store'), [
+            'name' => 'Bintang Pratama',
+            'nim' => '220450',
+            'email' => 'bintang.baru@kasma.edu',
+            'phone_number' => '081298765432',
+        ]);
+
+        $response->assertOk();
+        $response->assertSee('Tautan Aktivasi Berhasil Dibuat');
+        $response->assertSee('Bintang Pratama');
+        $response->assertSee('/aktivasi/');
+        $response->assertSee('https://wa.me/6281298765432');
+    }
+
+    public function test_bendahara_can_add_student_without_phone_number(): void
+    {
+        $response = $this->actingAs($this->treasurer)->followingRedirects()->post(route('bendahara.mahasiswa.store'), [
+            'name' => 'Dimas Tanpa WA',
+            'nim' => '220498',
+            'email' => 'dimas@kasma.edu',
+            'phone_number' => null,
+        ]);
+
+        $response->assertOk();
+        $this->assertDatabaseHas('users', [
+            'name' => 'Dimas Tanpa WA',
+            'nim' => '220498',
+            'phone_number' => null,
+        ]);
+    }
+
+    public function test_bendahara_resending_activation_renders_modal_without_view_errors(): void
+    {
+        $unactivated = User::create([
+            'name' => 'Rina Belum Aktif',
+            'nim' => '220497',
+            'email' => 'rina@kasma.edu',
+            'phone_number' => '085711223344',
+            'role' => 'mahasiswa',
+            'password' => null,
+            'is_active' => true,
+            'activation_token' => hash('sha256', Str::random(64)),
+            'activation_expires_at' => now()->addHours(72),
+            'activated_at' => null,
+        ]);
+
+        $response = $this->actingAs($this->treasurer)->followingRedirects()
+            ->post(route('bendahara.mahasiswa.resend-activation', $unactivated));
+
+        $response->assertOk();
+        $response->assertSee('Tautan Aktivasi Berhasil Dibuat');
+        $response->assertSee('Rina Belum Aktif');
+        $response->assertSee('https://wa.me/6285711223344');
+    }
+
+    public function test_bendahara_can_update_student_details(): void
+    {
+        $response = $this->actingAs($this->treasurer)->put(route('bendahara.mahasiswa.update', $this->student), [
+            'name' => 'Ahmad Fathoni Updated',
+            'nim' => '220401',
+            'email' => 'hafizh@kasma.edu',
+            'phone_number' => '089911223344',
+        ]);
+
+        $response->assertRedirect(route('bendahara.mahasiswa.index'));
+        $this->student->refresh();
+        $this->assertEquals('Ahmad Fathoni Updated', $this->student->name);
+        $this->assertEquals('089911223344', $this->student->phone_number);
+    }
+
+    public function test_student_activation_status_is_properly_displayed_in_view(): void
+    {
+        // $this->student is already activated with a password
+        $this->assertTrue($this->student->isActivated());
+
+        $response = $this->actingAs($this->treasurer)->get(route('bendahara.mahasiswa.index'));
+
+        $response->assertOk();
+        // Activated student shows status badge "Aktif", not "Menunggu Aktivasi"
+        $response->assertSee('Aktif');
+        $this->assertTrue($this->student->is_activated);
+    }
 }

@@ -25,7 +25,7 @@ class StoreStudentRequest extends FormRequest
             'name' => ['required', 'string', 'max:255'],
             'nim' => ['required', 'string', 'max:20', 'unique:users,nim'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'phone_number' => ['required', 'string', 'max:25'],
+            'phone_number' => ['nullable', 'string', 'max:25'],
         ];
     }
 

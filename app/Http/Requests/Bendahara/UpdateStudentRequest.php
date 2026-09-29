@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Bendahara;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateStudentRequest extends FormRequest
 {
@@ -21,9 +22,13 @@ class UpdateStudentRequest extends FormRequest
      */
     public function rules(): array
     {
+        $studentId = $this->route('mahasiswa')?->id;
+
         return [
             'name' => ['required', 'string', 'max:255'],
-            'phone_number' => ['required', 'string', 'max:25'],
+            'nim' => ['required', 'string', 'max:20', Rule::unique('users', 'nim')->ignore($studentId)],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users', 'email')->ignore($studentId)],
+            'phone_number' => ['nullable', 'string', 'max:25'],
         ];
     }
 
@@ -36,6 +41,8 @@ class UpdateStudentRequest extends FormRequest
     {
         return [
             'name' => 'Nama Mahasiswa',
+            'nim' => 'NIM',
+            'email' => 'Email Kampus',
             'phone_number' => 'Nomor Telepon / WhatsApp',
         ];
     }
