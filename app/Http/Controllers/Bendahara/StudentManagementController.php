@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Bendahara\StoreStudentRequest;
 use App\Http\Requests\Bendahara\UpdateStudentRequest;
 use App\Models\CashPeriod;
+use App\Models\FinancialTransaction;
+use App\Models\Payment;
 use App\Models\StudentDue;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -137,6 +139,38 @@ class StudentManagementController extends Controller
 
         return redirect()->route('bendahara.mahasiswa.index')
             ->with('success', "Data mahasiswa {$mahasiswa->name} berhasil diperbarui.");
+    }
+
+    /**
+     * Remove the specified student and cascade related records safely.
+     */
+    public function destroy(User $mahasiswa): RedirectResponse
+    {
+        if ($mahasiswa->role !== 'mahasiswa') {
+            abort(403, 'Aksi tidak diizinkan.');
+        }
+
+        $studentName = $mahasiswa->name;
+
+        DB::transaction(function () use ($mahasiswa) {
+            $dueIds = $mahasiswa->studentDues()->pluck('id');
+            $paymentIds = Payment::whereIn('student_due_id', $dueIds)->pluck('id');
+
+            // Delete financial transactions linked to payments
+            FinancialTransaction::whereIn('payment_id', $paymentIds)->delete();
+
+            // Delete payments
+            Payment::whereIn('id', $paymentIds)->delete();
+
+            // Delete dues
+            StudentDue::whereIn('id', $dueIds)->delete();
+
+            // Delete user
+            $mahasiswa->delete();
+        });
+
+        return redirect()->route('bendahara.mahasiswa.index')
+            ->with('success', "Data mahasiswa {$studentName} berhasil dihapus dari sistem.");
     }
 
     /**

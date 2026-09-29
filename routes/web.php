@@ -120,6 +120,7 @@ Route::middleware(['auth', 'role:bendahara'])
         Route::get('/mahasiswa', [StudentManagementController::class, 'index'])->name('mahasiswa.index');
         Route::post('/mahasiswa', [StudentManagementController::class, 'store'])->name('mahasiswa.store');
         Route::put('/mahasiswa/{mahasiswa}', [StudentManagementController::class, 'update'])->name('mahasiswa.update');
+        Route::delete('/mahasiswa/{mahasiswa}', [StudentManagementController::class, 'destroy'])->name('mahasiswa.destroy');
         Route::patch('/mahasiswa/{mahasiswa}/toggle-status', [StudentManagementController::class, 'toggleStatus'])->name('mahasiswa.toggle-status');
         Route::post('/mahasiswa/{mahasiswa}/resend-activation', [StudentManagementController::class, 'resendActivation'])->name('mahasiswa.resend-activation');
 

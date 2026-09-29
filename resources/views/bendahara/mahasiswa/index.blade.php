@@ -4,6 +4,7 @@
         addModalOpen: false,
         editModalOpen: false,
         statusModalOpen: false,
+        deleteModalOpen: false,
         activationModalOpen: {{ session('new_student_activation') ? 'true' : 'false' }},
         selectedStudent: {
             id: null,
@@ -33,6 +34,10 @@
         openStatusConfirm(student) {
             this.selectedStudent = Object.assign({}, student);
             this.statusModalOpen = true;
+        },
+        openDelete(student) {
+            this.selectedStudent = Object.assign({}, student);
+            this.deleteModalOpen = true;
         }
     }">
 
@@ -210,6 +215,18 @@
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
                                             </svg>
                                         </button>
+
+                                        <button type="button" 
+                                                @click="openDelete({
+                                                    id: {{ $student->id }},
+                                                    name: '{{ addslashes($student->name) }}'
+                                                })"
+                                                class="p-1 text-zinc-400 hover:text-rose-600 hover:bg-rose-50 rounded transition cursor-pointer"
+                                                title="Hapus Mahasiswa">
+                                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -380,6 +397,46 @@
                         </div>
                     </form>
                 </div>
+            </div>
+        </div>
+
+        <!-- MODAL: Hapus Mahasiswa -->
+        <div x-show="deleteModalOpen" 
+             x-cloak 
+             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-900/40 backdrop-blur-[2px]"
+             @keydown.escape.window="deleteModalOpen = false">
+            <div class="bg-white rounded-xl max-w-sm w-full p-6 shadow-xl border border-zinc-200" 
+                 @click.away="deleteModalOpen = false">
+                <div class="flex items-center justify-between pb-3 border-b border-zinc-100">
+                    <h3 class="font-semibold text-rose-600 text-sm">Hapus Data Mahasiswa</h3>
+                    <button type="button" @click="deleteModalOpen = false" class="text-zinc-400 hover:text-zinc-600 cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                <form :action="'/bendahara/mahasiswa/' + selectedStudent.id" method="POST" class="mt-4 space-y-3.5 text-xs">
+                    @csrf
+                    @method('DELETE')
+                    
+                    <p class="text-zinc-600 leading-relaxed">
+                        Apakah Anda yakin ingin menghapus data mahasiswa <strong class="text-zinc-900" x-text="selectedStudent.name"></strong>?
+                    </p>
+
+                    <div class="p-3 bg-rose-50 border border-rose-100 rounded-lg text-rose-800 text-[11px] leading-relaxed">
+                        Semua data kewajiban iuran dan riwayat pembayaran terkait mahasiswa ini akan dibersihkan. Tindakan ini tidak dapat dibatalkan.
+                    </div>
+
+                    <div class="flex gap-2 pt-2 border-t border-zinc-100">
+                        <button type="submit" class="flex-1 py-2 px-3 text-xs font-semibold rounded-lg text-white bg-rose-600 hover:bg-rose-700 transition cursor-pointer">
+                            Ya, Hapus Mahasiswa
+                        </button>
+                        <button type="button" @click="deleteModalOpen = false" class="py-2 px-3 text-xs font-medium rounded-lg text-zinc-600 bg-zinc-100 hover:bg-zinc-200 transition cursor-pointer">
+                            Batal
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
 

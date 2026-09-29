@@ -630,4 +630,70 @@ class StudentManagementTest extends TestCase
         $response->assertSee('Aktif');
         $this->assertTrue($this->student->is_activated);
     }
+
+    public function test_bendahara_can_delete_student_and_cascade_records(): void
+    {
+        $period = CashPeriod::create([
+            'academic_year' => '2025/2026',
+            'semester' => 'genap',
+            'week_number' => 1,
+            'name' => 'Pekan ke-1',
+            'amount' => 10000,
+            'start_date' => now()->toDateString(),
+            'due_date' => now()->addDays(7)->toDateString(),
+            'is_active' => true,
+        ]);
+
+        $due = StudentDue::create([
+            'user_id' => $this->student->id,
+            'cash_period_id' => $period->id,
+            'amount' => 10000,
+            'status' => 'paid',
+        ]);
+
+        $payment = Payment::create([
+            'student_due_id' => $due->id,
+            'amount' => 10000,
+            'payment_method' => 'cash',
+            'status' => 'approved',
+            'paid_at' => now(),
+            'verified_at' => now(),
+            'verified_by' => $this->treasurer->id,
+        ]);
+
+        FinancialTransaction::create([
+            'type' => 'income',
+            'amount' => 10000,
+            'transaction_date' => now()->toDateString(),
+            'category' => 'iuran_kas',
+            'description' => 'Iuran Pekan 1 - ' . $this->student->name,
+            'payment_id' => $payment->id,
+            'created_by' => $this->treasurer->id,
+        ]);
+
+        $response = $this->actingAs($this->treasurer)->delete(route('bendahara.mahasiswa.destroy', $this->student));
+
+        $response->assertRedirect(route('bendahara.mahasiswa.index'));
+        $response->assertSessionHas('success');
+
+        $this->assertDatabaseMissing('users', ['id' => $this->student->id]);
+        $this->assertDatabaseMissing('student_dues', ['id' => $due->id]);
+        $this->assertDatabaseMissing('payments', ['id' => $payment->id]);
+        $this->assertDatabaseMissing('financial_transactions', ['payment_id' => $payment->id]);
+    }
+
+    public function test_kasma_reset_database_command_cleans_all_students_and_transactions(): void
+    {
+        // Student exists
+        $this->assertDatabaseHas('users', ['role' => 'mahasiswa']);
+
+        $this->artisan('kasma:reset-database --force')
+            ->assertSuccessful();
+
+        $this->assertEquals(0, User::where('role', 'mahasiswa')->count());
+        $this->assertEquals(0, StudentDue::count());
+        $this->assertEquals(0, Payment::count());
+        $this->assertEquals(0, FinancialTransaction::count());
+        $this->assertTrue(User::where('role', 'bendahara')->exists());
+    }
 }
