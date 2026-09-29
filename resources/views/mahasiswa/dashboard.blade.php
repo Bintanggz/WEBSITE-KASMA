@@ -105,7 +105,7 @@
                     <div class="bg-zinc-50 p-4 rounded-lg border border-zinc-100">
                         <span class="text-[11px] font-medium text-zinc-500 uppercase tracking-wider block">Nominal Iuran Pekan Ini</span>
                         <span class="text-2xl font-bold font-mono text-zinc-900 mt-1 block">
-                            Rp {{ number_format($currentDue?->amount ?? ($activePeriod?->amount ?? 10000), 0, ',', '.') }}
+                            Rp {{ number_format($currentDue?->amount ?? ($activePeriod?->amount ?? 5000), 0, ',', '.') }}
                         </span>
                         <span class="text-[11px] text-zinc-400 mt-1 block">
                             @if($currentDue && $currentDue->isPaid())

@@ -85,7 +85,7 @@ class DummyDataSeeder extends Seeder
                     'semester' => 'genap',
                     'week_number' => $w,
                     'name' => 'Pekan ' . $w,
-                    'amount' => '10000.00',
+                    'amount' => '5000.00',
                     'start_date' => $startDate->toDateString(),
                     'due_date' => $dueDate->toDateString(),
                     'is_active' => ($w === 9),

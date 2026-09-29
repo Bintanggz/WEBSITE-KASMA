@@ -5,7 +5,7 @@
         activeAcademicYear: '{{ date('Y') . '/' . (date('Y') + 1) }}',
         activeSemester: 'genap',
         activeWeeks: 16,
-        activeAmount: 10000,
+        activeAmount: 5000,
         startDate: '{{ date('Y-m-d') }}',
         dueDate: '{{ date('Y-m-d', strtotime('+7 days')) }}'
     }">
@@ -252,8 +252,8 @@
 
                         <div>
                             <label class="block text-zinc-700 font-medium mb-1">Iuran per Pekan (Rp)</label>
-                            <input type="number" name="amount" value="10000" min="1000" step="500" class="w-full bg-white border border-zinc-300 rounded-lg px-3 py-2 text-xs text-zinc-900 focus:outline-none focus:border-zinc-900 font-mono" required>
-                            <span class="text-[10px] text-zinc-400">Default: Rp 10.000</span>
+                            <input type="number" name="amount" value="5000" min="1000" step="500" class="w-full bg-white border border-zinc-300 rounded-lg px-3 py-2 text-xs text-zinc-900 focus:outline-none focus:border-zinc-900 font-mono" required>
+                            <span class="text-[10px] text-zinc-400">Default: Rp 5.000</span>
                         </div>
                     </div>
 

@@ -45,7 +45,7 @@ class DatabaseSeeder extends Seeder
                     'semester' => 'genap',
                     'week_number' => $w,
                     'name' => 'Pekan ' . $w,
-                    'amount' => '10000.00',
+                    'amount' => '5000.00',
                     'start_date' => $startDate->toDateString(),
                     'due_date' => $dueDate->toDateString(),
                     'is_active' => ($w === 1), // Week 1 is default active

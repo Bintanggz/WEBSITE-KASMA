@@ -118,7 +118,7 @@
                         <p class="text-xs text-zinc-500">Rekapitulasi jumlah mahasiswa lunas dan persentase iuran terkumpul per pekan</p>
                     </div>
                     <span class="text-xs font-mono text-zinc-600 bg-zinc-100 px-2.5 py-1 rounded-md border border-zinc-200">
-                        Target per Siswa: Rp 10.000 / pekan
+                        Target per Mahasiswa: Rp {{ number_format($cashPeriods->first()?->amount ?? 5000, 0, ',', '.') }} / pekan
                     </span>
                 </div>
 

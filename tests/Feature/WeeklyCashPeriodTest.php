@@ -259,4 +259,39 @@ class WeeklyCashPeriodTest extends TestCase
         $this->get(route('bendahara.iuran.index'))->assertRedirect(route('login'));
         $this->get(route('mahasiswa.iuran.index'))->assertRedirect(route('login'));
     }
+
+    public function test_database_seeder_initializes_weekly_dues_with_5000_amount(): void
+    {
+        $this->seed(\Database\Seeders\DatabaseSeeder::class);
+
+        $periods = CashPeriod::all();
+        $this->assertCount(16, $periods);
+        foreach ($periods as $period) {
+            $this->assertEquals('5000.00', $period->amount);
+        }
+    }
+
+    public function test_bendahara_views_display_5000_default_and_broadcast_rate(): void
+    {
+        CashPeriod::create([
+            'academic_year' => '2025/2026',
+            'semester' => 'genap',
+            'week_number' => 1,
+            'name' => 'Pekan ke-1',
+            'amount' => '5000.00',
+            'start_date' => now()->startOfWeek(),
+            'due_date' => now()->endOfWeek(),
+            'is_active' => true,
+        ]);
+
+        $iuranResponse = $this->actingAs($this->bendahara)->get(route('bendahara.iuran.index'));
+        $iuranResponse->assertStatus(200);
+        $iuranResponse->assertSee('Default: Rp 5.000');
+        $iuranResponse->assertSee('value="5000"', false);
+
+        $dashResponse = $this->actingAs($this->bendahara)->get(route('bendahara.dashboard'));
+        $dashResponse->assertStatus(200);
+        $dashResponse->assertSee('Rp 5.000 / pekan');
+    }
 }
+

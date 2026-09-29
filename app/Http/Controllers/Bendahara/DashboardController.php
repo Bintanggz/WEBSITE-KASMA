@@ -35,7 +35,7 @@ class DashboardController extends Controller
         $activePeriodPaidCount = $activePeriod
             ? StudentDue::where('cash_period_id', $activePeriod->id)->where('status', 'paid')->count()
             : 0;
-        $activePeriodTargetAmount = $totalStudentsCount * (float) ($activePeriod?->amount ?? 10000);
+        $activePeriodTargetAmount = $totalStudentsCount * (float) ($activePeriod?->amount ?? 5000);
         $activePeriodCollectedAmount = $activePeriod
             ? StudentDue::where('cash_period_id', $activePeriod->id)->where('status', 'paid')->sum('amount')
             : 0;

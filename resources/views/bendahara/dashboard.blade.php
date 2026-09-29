@@ -705,7 +705,8 @@
 
                 @php
                     $unpaidNames = $unpaidStudents->map(fn($d) => "- " . $d->user->name)->join("\n");
-                    $broadcastText = "[PENGINGAT IURAN KAS KELAS TI26A3]\n\nHalo rekan-rekan, mengingatkan kembali untuk iuran kas " . ($activePeriod->name ?? 'Pekan Ini') . " (Rp 10.000 / pekan).\n\nBatas jatuh tempo: " . ($activePeriod?->due_date ? $activePeriod->due_date->translatedFormat('l, d M Y') : 'Jumat') . "\nRekening Kas: BCA 873-019-2819 a.n Bendahara Kas TI26A3.\n\nDaftar rekan yang belum lunas:\n" . ($unpaidNames ?: '- Semua lunas!') . "\n\nMohon segera melunasi dan mengunggah bukti di KASMA. Terima kasih!";
+                    $periodAmountFormatted = number_format($activePeriod?->amount ?? 5000, 0, ',', '.');
+                    $broadcastText = "[PENGINGAT IURAN KAS KELAS TI26A3]\n\nHalo rekan-rekan, mengingatkan kembali untuk iuran kas " . ($activePeriod->name ?? 'Pekan Ini') . " (Rp " . $periodAmountFormatted . " / pekan).\n\nBatas jatuh tempo: " . ($activePeriod?->due_date ? $activePeriod->due_date->translatedFormat('l, d M Y') : 'Jumat') . "\nRekening Kas: BCA 873-019-2819 a.n Bendahara Kas TI26A3.\n\nDaftar rekan yang belum lunas:\n" . ($unpaidNames ?: '- Semua lunas!') . "\n\nMohon segera melunasi dan mengunggah bukti di KASMA. Terima kasih!";
                 @endphp
 
                 <div class="mt-4 space-y-3 text-xs">
@@ -757,7 +758,7 @@
                         </div>
                         <div class="flex justify-between">
                             <span class="text-zinc-500">Nominal Iuran Mingguan:</span>
-                            <span class="font-semibold text-emerald-700 font-mono">Rp {{ number_format($activePeriod->amount ?? 10000, 0, ',', '.') }} / pekan</span>
+                            <span class="font-semibold text-emerald-700 font-mono">Rp {{ number_format($activePeriod->amount ?? 5000, 0, ',', '.') }} / pekan</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-zinc-500">Total Durasi Semester:</span>

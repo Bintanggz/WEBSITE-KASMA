@@ -297,7 +297,7 @@
                             <span x-text="copied ? 'Tersalin!' : 'Salin Rekening'"></span>
                         </button>
                     </div>
-                    <p class="text-[11px] text-zinc-500">Iuran: <strong class="text-zinc-800">Rp 10.000 / pekan</strong> &bull; Bisa memilih beberapa pekan sekaligus di bawah.</p>
+                    <p class="text-[11px] text-zinc-500">Iuran: <strong class="text-zinc-800">Rp 5.000 / pekan</strong> &bull; Bisa memilih beberapa pekan sekaligus di bawah.</p>
                 </div>
 
                 <!-- Visual QRIS Kas Kelas -->
