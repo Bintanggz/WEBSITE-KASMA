@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Mahasiswa;
 use App\Http\Controllers\Controller;
 use App\Models\FinancialTransaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class FinancialTransparencyController extends Controller
@@ -28,9 +29,10 @@ class FinancialTransparencyController extends Controller
         }
 
         if ($search !== '') {
-            $query->where(function ($q) use ($search) {
-                $q->where('description', 'like', "%{$search}%")
-                  ->orWhere('category', 'like', "%{$search}%");
+            $operator = DB::connection()->getDriverName() === 'pgsql' ? 'ilike' : 'like';
+            $query->where(function ($q) use ($search, $operator) {
+                $q->where('description', $operator, "%{$search}%")
+                  ->orWhere('category', $operator, "%{$search}%");
             });
         }
 

@@ -1,5 +1,15 @@
 <x-layouts.app role="mahasiswa" title="Dashboard Mahasiswa">
 
+    <div x-data="{
+        copiedBca: false,
+        qrisModalOpen: false,
+        copyBca() {
+            navigator.clipboard.writeText('8730192819');
+            this.copiedBca = true;
+            setTimeout(() => this.copiedBca = false, 2500);
+        }
+    }">
+
     <!-- Header Greeting & Student Context -->
     <div class="mb-6 pb-4 border-b border-zinc-200">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -245,6 +255,56 @@
 
     </div>
 
+    <!-- Quick Payment & Class Account Strip (Akses Cepat Pembayaran & QRIS) -->
+    <div class="mb-8 p-4 sm:p-5 bg-white rounded-xl border border-zinc-200 shadow-xs">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200/80 text-emerald-700 flex items-center justify-center shrink-0">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                    </svg>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold text-zinc-900 tracking-tight">Saluran Pembayaran Resmi Kas Kelas</h4>
+                    <p class="text-xs text-zinc-500 mt-0.5">Transfer Bank BCA &bull; QRIS Standar Nasional &bull; Bukti langsung diunggah di KASMA</p>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-2.5">
+                <!-- Salin No. Rekening BCA -->
+                <div class="flex items-center gap-2 bg-zinc-50 border border-zinc-200 rounded-lg px-3 py-1.5 text-xs">
+                    <span class="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">BCA</span>
+                    <span class="font-mono font-bold text-zinc-900">873-019-2819</span>
+                    <button type="button" 
+                            @click="copyBca()" 
+                            class="ml-1 text-[11px] font-semibold px-2 py-0.5 rounded bg-white hover:bg-zinc-100 border border-zinc-200 text-zinc-700 transition cursor-pointer">
+                        <span x-text="copiedBca ? 'Tersalin!' : 'Salin Rekening'"></span>
+                    </button>
+                </div>
+
+                <!-- Tampilkan QRIS Cepat -->
+                <button type="button" 
+                        @click="qrisModalOpen = true"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-zinc-800 bg-zinc-100 hover:bg-zinc-200 border border-zinc-200 transition cursor-pointer">
+                    <svg class="w-3.5 h-3.5 text-zinc-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
+                    </svg>
+                    <span>Tampilkan QRIS</span>
+                </button>
+
+                <!-- Tombol Setor Langsung -->
+                <button type="button" 
+                        @click="$dispatch('open-payment-modal', {})"
+                        class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-semibold text-white bg-emerald-700 hover:bg-emerald-800 transition cursor-pointer">
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                    </svg>
+                    <span>Bayar Kas Sekarang</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Lower Section: Recent Payment History & Simple Class Financial Summary -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
@@ -407,6 +467,93 @@
             </div>
 
         </div>
+
+    </div>
+
+    <!-- Modal Preview QRIS Cepat -->
+    <div x-show="qrisModalOpen" 
+         x-cloak 
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-900/40 backdrop-blur-[2px]"
+         @keydown.escape.window="qrisModalOpen = false">
+        <div class="bg-white rounded-xl max-w-sm w-full p-6 shadow-xl border border-zinc-200" 
+             @click.away="qrisModalOpen = false">
+            <div class="flex items-center justify-between pb-3 border-b border-zinc-100">
+                <div class="flex items-center space-x-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                    <h3 class="font-semibold text-zinc-900 text-sm">QRIS Kas Kelas TI26A3</h3>
+                </div>
+                <button type="button" @click="qrisModalOpen = false" class="text-zinc-400 hover:text-zinc-600 cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="mt-4 text-center space-y-3">
+                <div class="p-3 bg-zinc-900 text-white rounded-lg inline-block">
+                    <div class="bg-white p-3 rounded-md">
+                        <svg class="w-44 h-44 mx-auto" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="100" height="100" fill="white"/>
+                            <rect x="6" y="6" width="28" height="28" fill="#18181b" rx="2"/>
+                            <rect x="11" y="11" width="18" height="18" fill="white" rx="1"/>
+                            <rect x="15" y="15" width="10" height="10" fill="#18181b"/>
+                            <rect x="66" y="6" width="28" height="28" fill="#18181b" rx="2"/>
+                            <rect x="71" y="11" width="18" height="18" fill="white" rx="1"/>
+                            <rect x="75" y="15" width="10" height="10" fill="#18181b"/>
+                            <rect x="6" y="66" width="28" height="28" fill="#18181b" rx="2"/>
+                            <rect x="11" y="71" width="18" height="18" fill="white" rx="1"/>
+                            <rect x="15" y="75" width="10" height="10" fill="#18181b"/>
+                            <rect x="38" y="10" width="6" height="6" fill="#18181b"/>
+                            <rect x="48" y="10" width="6" height="6" fill="#18181b"/>
+                            <rect x="38" y="20" width="6" height="6" fill="#18181b"/>
+                            <rect x="52" y="20" width="6" height="6" fill="#18181b"/>
+                            <rect x="42" y="30" width="6" height="6" fill="#18181b"/>
+                            <rect x="10" y="42" width="6" height="6" fill="#18181b"/>
+                            <rect x="20" y="42" width="6" height="6" fill="#18181b"/>
+                            <rect x="30" y="42" width="6" height="6" fill="#18181b"/>
+                            <rect x="42" y="42" width="16" height="16" fill="#18181b" rx="1"/>
+                            <rect x="66" y="42" width="6" height="6" fill="#18181b"/>
+                            <rect x="76" y="42" width="14" height="6" fill="#18181b"/>
+                            <rect x="10" y="52" width="8" height="6" fill="#18181b"/>
+                            <rect x="24" y="52" width="12" height="6" fill="#18181b"/>
+                            <rect x="66" y="52" width="8" height="6" fill="#18181b"/>
+                            <rect x="80" y="52" width="10" height="6" fill="#18181b"/>
+                            <rect x="38" y="66" width="6" height="6" fill="#18181b"/>
+                            <rect x="48" y="66" width="10" height="6" fill="#18181b"/>
+                            <rect x="66" y="66" width="6" height="6" fill="#18181b"/>
+                            <rect x="76" y="66" width="6" height="6" fill="#18181b"/>
+                            <rect x="86" y="66" width="8" height="6" fill="#18181b"/>
+                            <rect x="38" y="78" width="12" height="6" fill="#18181b"/>
+                            <rect x="56" y="78" width="6" height="6" fill="#18181b"/>
+                            <rect x="68" y="78" width="8" height="6" fill="#18181b"/>
+                            <rect x="82" y="78" width="12" height="6" fill="#18181b"/>
+                            <rect x="42" y="88" width="8" height="6" fill="#18181b"/>
+                            <rect x="56" y="88" width="10" height="6" fill="#18181b"/>
+                            <rect x="72" y="88" width="8" height="6" fill="#18181b"/>
+                            <rect x="86" y="88" width="8" height="6" fill="#18181b"/>
+                        </svg>
+                    </div>
+                    <p class="text-[10px] text-zinc-400 mt-2 font-mono">NMID: ID1026002910</p>
+                </div>
+
+                <div class="text-xs text-zinc-600">
+                    <p class="font-semibold text-zinc-900">Mendukung Seluruh Aplikasi:</p>
+                    <p class="text-[11px] text-zinc-500">GoPay, OVO, Dana, ShopeePay, BCA, Mandiri, BRI, BNI, dll.</p>
+                </div>
+
+                <div class="pt-2 border-t border-zinc-100 flex gap-2">
+                    <button type="button" 
+                            @click="qrisModalOpen = false; $dispatch('open-payment-modal', {})"
+                            class="flex-1 py-2 px-3 text-xs font-semibold rounded-lg text-white bg-emerald-700 hover:bg-emerald-800 transition cursor-pointer">
+                        Unggah Bukti Bayar &rarr;
+                    </button>
+                    <button type="button" @click="qrisModalOpen = false" class="py-2 px-3 text-xs font-medium rounded-lg text-zinc-600 bg-zinc-100 hover:bg-zinc-200 transition cursor-pointer">
+                        Tutup
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     </div>
 

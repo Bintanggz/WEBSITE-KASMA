@@ -22,43 +22,57 @@ class CashPaymentController extends Controller
         $dueId = $request->input('student_due_id');
         $studentName = '';
 
-        DB::transaction(function () use ($dueId, &$studentName) {
-            $due = StudentDue::lockForUpdate()->findOrFail($dueId);
+        try {
+            DB::transaction(function () use ($dueId, &$studentName) {
+                $due = StudentDue::lockForUpdate()->findOrFail($dueId);
 
-            if ($due->isPaid()) {
-                throw new \Exception('Kewajiban kas ini sudah lunas sebelumnya.');
-            }
+                if ($due->isPaid()) {
+                    throw new \Exception('Kewajiban kas ini sudah lunas sebelumnya.');
+                }
 
-            $now = Carbon::now();
-            $studentName = $due->user->name ?? 'Mahasiswa';
+                $now = Carbon::now();
+                $studentName = $due->user->name ?? 'Mahasiswa';
 
-            $payment = Payment::create([
-                'student_due_id' => $due->id,
-                'amount' => $due->amount,
-                'payment_method' => 'cash',
-                'proof_file_path' => null,
-                'payment_date' => $now,
-                'status' => 'approved',
-                'verified_by' => Auth::id(),
-                'verified_at' => $now,
-            ]);
+                // If student had a pending payment submission for this due, resolve it
+                Payment::where('student_due_id', $due->id)
+                    ->where('status', 'pending')
+                    ->update([
+                        'status' => 'rejected',
+                        'rejection_reason' => 'Digantikan oleh setoran tunai langsung ke bendahara kelas.',
+                        'verified_by' => Auth::id(),
+                        'verified_at' => $now,
+                    ]);
 
-            $due->update([
-                'status' => 'paid',
-            ]);
+                $payment = Payment::create([
+                    'student_due_id' => $due->id,
+                    'amount' => $due->amount,
+                    'payment_method' => 'cash',
+                    'proof_file_path' => null,
+                    'payment_date' => $now,
+                    'status' => 'approved',
+                    'verified_by' => Auth::id(),
+                    'verified_at' => $now,
+                ]);
 
-            // Create ledger income entry
-            FinancialTransaction::create([
-                'type' => 'income',
-                'amount' => $due->amount,
-                'transaction_date' => $now->toDateString(),
-                'category' => 'Iuran Kas Tunai',
-                'description' => 'Iuran ' . ($due->cashPeriod->name ?? 'Kas') . ' (Tunai) - ' . $due->user->name . ' (' . $due->user->nim . ')',
-                'payment_id' => $payment->id,
-                'receipt_path' => null,
-                'created_by' => Auth::id(),
-            ]);
-        });
+                $due->update([
+                    'status' => 'paid',
+                ]);
+
+                // Create ledger income entry
+                FinancialTransaction::create([
+                    'type' => 'income',
+                    'amount' => $due->amount,
+                    'transaction_date' => $now->toDateString(),
+                    'category' => 'Iuran Kas Tunai',
+                    'description' => 'Iuran ' . ($due->cashPeriod->name ?? 'Kas') . ' (Tunai) - ' . $due->user->name . ' (' . $due->user->nim . ')',
+                    'payment_id' => $payment->id,
+                    'receipt_path' => null,
+                    'created_by' => Auth::id(),
+                ]);
+            });
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Gagal mencatat pembayaran tunai: ' . $e->getMessage());
+        }
 
         return redirect()->back()->with('success', "Setoran tunai untuk {$studentName} berhasil dicatat dan masuk ke kas kelas!");
     }

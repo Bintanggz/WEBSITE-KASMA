@@ -1,6 +1,18 @@
 <x-layouts.app role="bendahara" title="Detail {{ $period->name }}">
 
-    <div x-data="{ filter: 'semua', search: '' }">
+    <div x-data="{ 
+        filter: 'semua', 
+        search: '',
+        broadcastModalOpen: false,
+        copiedBroadcast: false,
+        copyBroadcastText() {
+            const textarea = this.$refs.broadcastTextarea;
+            textarea.select();
+            navigator.clipboard.writeText(textarea.value);
+            this.copiedBroadcast = true;
+            setTimeout(() => this.copiedBroadcast = false, 2500);
+        }
+    }">
         
         <!-- Breadcrumb & Header -->
         <div class="mb-6 pb-4 border-b border-zinc-200">
@@ -29,7 +41,16 @@
                     </p>
                 </div>
 
-                <div class="flex items-center gap-2">
+                <div class="flex flex-wrap items-center gap-2">
+                    <button type="button" 
+                            @click="broadcastModalOpen = true"
+                            class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg text-emerald-900 bg-emerald-50 border border-emerald-200 hover:bg-emerald-100 transition shadow-xs cursor-pointer">
+                        <svg class="w-3.5 h-3.5 fill-current text-emerald-700" viewBox="0 0 24 24">
+                            <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.007c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86.174.086.275.072.376-.043.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.043.072.043.419-.101.824z"/>
+                        </svg>
+                        <span>Format WA Grup</span>
+                    </button>
+
                     @if(!$period->is_active)
                         <form action="{{ route('bendahara.iuran.activate', $period) }}" method="POST">
                             @csrf
@@ -162,7 +183,7 @@
                                     $cleanPhone = '62' . substr($cleanPhone, 1);
                                 }
                                 $dueAmountFmt = number_format($due->amount, 0, ',', '.');
-                                $dueWaMsg = "Halo {$due->user->name},\n\nMengingatkan dari Bendahara Kas Kelas TI26A3, tagihan kas untuk {$period->name} (Rp {$dueAmountFmt}) belum tercatat lunas.\n\nPembayaran dapat disetorkan melalui Transfer BCA 1234567890 a.n. Kas Kelas TI26A3 atau scan QRIS di website KASMA.\n\nMohon segera konfirmasi ya. Terima kasih! 🙏";
+                                $dueWaMsg = "Halo {$due->user->name},\n\nMengingatkan dari Bendahara Kas Kelas TI26A3, tagihan kas untuk {$period->name} (Rp {$dueAmountFmt}) belum tercatat lunas.\n\nPembayaran dapat disetorkan melalui Transfer BCA 873-019-2819 a.n. Bendahara Kas TI26A3 atau scan QRIS di website KASMA.\n\nMohon segera konfirmasi ya. Terima kasih! 🙏";
                             @endphp
                             <tr class="hover:bg-zinc-50/60 transition"
                                 x-show="(filter === 'semua' || (filter === 'lunas' && {{ $isPaid ? 'true' : 'false' }}) || (filter === 'belum' && {{ ! $isPaid ? 'true' : 'false' }})) && (!search || '{{ strtolower(addslashes($due->user->name ?? '')) }}'.includes(search.toLowerCase()) || '{{ $due->user->nim ?? '' }}'.includes(search.toLowerCase()))">
@@ -220,6 +241,75 @@
             <div class="px-5 py-3.5 bg-zinc-50 border-t border-zinc-200 flex items-center justify-between text-xs text-zinc-500">
                 <span>Status kewajiban kas diperbarui saat pembayaran diverifikasi bendahara</span>
                 <span class="font-mono">Total: {{ $totalStudents }} Mahasiswa</span>
+            </div>
+        </div>
+
+        <!-- MODAL: Broadcast WhatsApp Rekap Pekan Ini -->
+        <div x-show="broadcastModalOpen" 
+             x-cloak 
+             class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-900/40 backdrop-blur-[2px]"
+             @keydown.escape.window="broadcastModalOpen = false">
+            <div class="bg-white rounded-xl max-w-lg w-full p-6 shadow-xl border border-zinc-200 max-h-[90vh] overflow-y-auto" 
+                 @click.away="broadcastModalOpen = false">
+                <div class="flex items-center justify-between pb-3 border-b border-zinc-100">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+                        <h3 class="font-semibold text-zinc-900 text-sm">Salin Pesan Rekap WhatsApp Grup</h3>
+                    </div>
+                    <button type="button" @click="broadcastModalOpen = false" class="text-zinc-400 hover:text-zinc-600 cursor-pointer">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+
+                @php
+                    $unpaidList = $dues->where('status', 'unpaid')->values();
+                    $unpaidLines = $unpaidList->map(fn($d, $i) => ($i + 1) . '. ' . ($d->user->name ?? 'Mahasiswa'))->implode("\n");
+                    $broadcastText = "📢 *[PENGINGAT KAS KELAS TI26A3]*\n"
+                        . "*{$period->name}* ({$period->academic_year} - Semester " . ucfirst($period->semester) . ")\n"
+                        . "Iuran: Rp " . number_format($period->amount, 0, ',', '.') . " / mahasiswa\n"
+                        . "Batas Jatuh Tempo: " . $period->due_date->format('d M Y') . "\n\n"
+                        . "📊 *Status Progres Setoran:*\n"
+                        . "• Lunas: {$paidCount}/{$totalStudents} Mahasiswa ({$percentage}%)\n"
+                        . "• Dana Terkumpul: Rp " . number_format($paidAmount, 0, ',', '.') . " / Rp " . number_format($targetAmount, 0, ',', '.') . "\n\n"
+                        . "❌ *Mahasiswa Belum Melunasi ({$unpaidCount} Orang):*\n"
+                        . ($unpaidCount > 0 ? $unpaidLines : "Alhamdulillah seluruh mahasiswa sudah lunas! 🎉") . "\n\n"
+                        . "💳 *Metode Pembayaran:*\n"
+                        . "• Transfer BCA: *873-019-2819* (a.n. Bendahara Kas TI26A3)\n"
+                        . "• QRIS Kas Kelas: Akses & unggah bukti transfer via website KASMA\n\n"
+                        . "Mohon bagi rekan-rekan yang belum bayar segera melunasi ya. Terima kasih! 🙏";
+                @endphp
+
+                <div class="mt-4 space-y-3 text-xs">
+                    <p class="text-zinc-500">
+                        Teks di bawah ini sudah diformat rapi dengan emoji dan daftar mahasiswa yang belum bayar. Anda bisa langsung menyalinnya ke grup WhatsApp kelas:
+                    </p>
+
+                    <div>
+                        <textarea x-ref="broadcastTextarea" 
+                                  rows="10" 
+                                  readonly 
+                                  class="w-full bg-zinc-50 border border-zinc-200 rounded-lg p-3 text-xs font-mono text-zinc-800 focus:outline-none focus:border-zinc-400 select-all">{{ $broadcastText }}</textarea>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-2 pt-2 border-t border-zinc-100">
+                        <button type="button" 
+                                @click="copyBroadcastText()" 
+                                class="flex-1 py-2 px-3 text-xs font-semibold rounded-lg text-white bg-emerald-700 hover:bg-emerald-800 transition flex items-center justify-center gap-1.5 cursor-pointer">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                            </svg>
+                            <span x-text="copiedBroadcast ? 'Tersalin ke Clipboard!' : 'Salin Teks Format WhatsApp'"></span>
+                        </button>
+                        <a href="https://wa.me/?text={{ urlencode($broadcastText) }}" 
+                           target="_blank" 
+                           rel="noopener noreferrer"
+                           class="py-2 px-3 text-xs font-semibold rounded-lg text-emerald-900 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 transition text-center cursor-pointer">
+                            Buka WhatsApp &rarr;
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
 

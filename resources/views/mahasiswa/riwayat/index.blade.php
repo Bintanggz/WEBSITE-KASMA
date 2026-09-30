@@ -160,26 +160,53 @@
                                 </td>
                                 <td class="py-3.5 px-4 text-center whitespace-nowrap">
                                     @if($p->isApproved())
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
-                                            Disetujui
-                                        </span>
+                                        <div class="inline-flex flex-col items-center">
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                                                <svg class="w-3 h-3 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                                <span>Sah &amp; Lunas</span>
+                                            </span>
+                                            <span class="text-[9px] text-zinc-400 font-mono mt-0.5">Tercatat di Kas</span>
+                                        </div>
                                     @elseif($p->isPending())
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-50 text-amber-800 border border-amber-200">
-                                            Menunggu
-                                        </span>
+                                        <div class="inline-flex flex-col items-center">
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-semibold bg-amber-50 text-amber-800 border border-amber-200">
+                                                <svg class="w-3 h-3 text-amber-600 animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                </svg>
+                                                <span>Dalam Tinjauan</span>
+                                            </span>
+                                            <span class="text-[9px] text-amber-700/80 mt-0.5">Antrean Bendahara</span>
+                                        </div>
                                     @else
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-50 text-rose-800 border border-rose-200">
-                                            Ditolak
-                                        </span>
+                                        <div class="inline-flex flex-col items-center">
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-[10px] font-semibold bg-rose-50 text-rose-800 border border-rose-200">
+                                                <svg class="w-3 h-3 text-rose-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                                <span>Ditolak</span>
+                                            </span>
+                                            <span class="text-[9px] text-rose-600 mt-0.5">Perlu Setor Ulang</span>
+                                        </div>
                                     @endif
                                 </td>
                                 <td class="py-3.5 px-4 text-zinc-500">
                                     @if($p->isRejected())
-                                        <span class="text-rose-700 font-medium text-xs">{{ $p->rejection_reason }}</span>
+                                        <div class="p-2 rounded-lg bg-rose-50/80 border border-rose-200/80 text-rose-900 text-xs space-y-0.5">
+                                            <span class="font-semibold block text-[10px] text-rose-700 uppercase tracking-wider">Alasan Penolakan:</span>
+                                            <span>{{ $p->rejection_reason }}</span>
+                                        </div>
                                     @elseif($p->isPending())
-                                        <span class="text-zinc-400 italic text-[11px]">Sedang diperiksa bendahara</span>
+                                        <div class="flex items-center gap-1.5 text-zinc-500 text-xs">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0"></span>
+                                            <span>Bukti transfer sedang dalam antrean verifikasi bendahara kelas.</span>
+                                        </div>
                                     @else
-                                        <span class="text-zinc-400 text-[11px]">Pembayaran sah dicatat kasir</span>
+                                        <div class="flex items-center gap-1.5 text-zinc-600 text-xs">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>
+                                            <span>Diverifikasi oleh: <strong class="text-zinc-800 font-medium">{{ $p->verifier->name ?? 'Bendahara' }}</strong> ({{ $p->verified_at ? $p->verified_at->format('d M Y, H:i') : 'Sah' }})</span>
+                                        </div>
                                     @endif
                                 </td>
                                 <td class="py-3.5 px-4 text-right whitespace-nowrap">

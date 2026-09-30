@@ -18,7 +18,7 @@ class ExpenseController extends Controller
     {
         $receiptPath = null;
         if ($request->hasFile('receipt_file')) {
-            $receiptPath = $request->file('receipt_file')->store('receipts', 'public');
+            $receiptPath = $request->file('receipt_file')->store('receipts', 'local');
         }
 
         DB::transaction(function () use ($request, $receiptPath) {

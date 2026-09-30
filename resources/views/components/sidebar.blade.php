@@ -184,7 +184,7 @@
                         </p>
                         <p class="text-[10px] text-zinc-500 truncate">
                             @if(auth()->user()?->isMahasiswa() || $role === 'mahasiswa')
-                                NIM: {{ auth()->user()->nim ?? '220401' }}
+                                NIM: {{ auth()->user()->nim ?? '-' }}
                             @else
                                 Bendahara Kelas
                             @endif

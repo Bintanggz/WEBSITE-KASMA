@@ -163,9 +163,11 @@
                                 </td>
                                 <td class="py-3.5 px-4 text-center whitespace-nowrap">
                                     @php
-                                        $hasReceipt = $tx->receipt_path || ($tx->payment && $tx->payment->proof_file_path);
+                                        $canViewReceipt = ($tx->type === 'expense' && $tx->receipt_path) 
+                                            || ($tx->receipt_path && ! $tx->payment_id)
+                                            || ($tx->payment && $tx->payment->studentDue?->user_id === auth()->id());
                                     @endphp
-                                    @if($hasReceipt)
+                                    @if($canViewReceipt)
                                         <button type="button"
                                                 @click="openReceipt('{{ route('transactions.receipt', $tx) }}', '{{ addslashes($tx->description) }}')"
                                                 class="px-2 py-0.5 rounded text-[11px] font-medium text-zinc-600 bg-zinc-100 hover:bg-zinc-200 transition cursor-pointer">
@@ -211,7 +213,12 @@
                             <span class="text-zinc-500">
                                 {{ $tx->type === 'income' ? 'Kas Masuk' : 'Pengeluaran' }} &bull; {{ ucfirst(str_replace('_', ' ', $tx->category)) }}
                             </span>
-                            @if($tx->receipt_path || ($tx->payment && $tx->payment->proof_file_path))
+                            @php
+                                $canViewReceiptMobile = ($tx->type === 'expense' && $tx->receipt_path) 
+                                    || ($tx->receipt_path && ! $tx->payment_id)
+                                    || ($tx->payment && $tx->payment->studentDue?->user_id === auth()->id());
+                            @endphp
+                            @if($canViewReceiptMobile)
                                 <button type="button"
                                         @click="openReceipt('{{ route('transactions.receipt', $tx) }}', '{{ addslashes($tx->description) }}')"
                                         class="text-zinc-600 hover:text-zinc-900 font-medium underline cursor-pointer">

@@ -20,6 +20,15 @@ class TransactionReceiptController extends Controller
             abort(401, 'Silakan masuk untuk mengakses berkas ini.');
         }
 
+        // Authorization check for payment-based transactions:
+        // Mahasiswa may only view their own payment proof; Bendahara can view any.
+        if ($user->isMahasiswa() && ($transaction->isPaymentBased() || $transaction->payment_id !== null)) {
+            $studentId = $transaction->payment?->studentDue?->user_id;
+            if (! $studentId || $studentId !== $user->id) {
+                abort(403, 'Anda tidak memiliki hak akses untuk melihat bukti transfer mahasiswa lain.');
+            }
+        }
+
         $path = $transaction->receipt_path;
 
         // If no explicit receipt_path, check if transaction has payment proof

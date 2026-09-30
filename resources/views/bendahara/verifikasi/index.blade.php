@@ -9,7 +9,8 @@
             this.rejectData = { id: id, name: name };
             this.rejectModalOpen = true;
         }
-    }">
+    }"
+    @open-reject-modal.window="openReject($event.detail.id, $event.detail.name)">
 
         <!-- Header -->
         <div class="mb-6 pb-4 border-b border-zinc-200">

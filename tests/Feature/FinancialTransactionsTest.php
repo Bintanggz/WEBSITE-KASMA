@@ -456,4 +456,71 @@ class FinancialTransactionsTest extends TestCase
         $treasurerResponse = $this->actingAs($this->bendahara)->get(route('transactions.receipt', $tx));
         $treasurerResponse->assertStatus(200);
     }
+
+    public function test_student_cannot_view_another_students_payment_proof_via_transaction_receipt(): void
+    {
+        $otherStudent = User::factory()->create([
+            'role' => 'mahasiswa',
+            'is_active' => true,
+        ]);
+
+        $file = $this->createFakeJpg('bukti_transfer_pribadi.jpg');
+        $path = $file->store('proofs', 'local');
+
+        $payment = Payment::create([
+            'student_due_id' => $this->due->id, // belongs to $this->mahasiswa
+            'amount' => '10000.00',
+            'payment_date' => now(),
+            'payment_method' => 'bank_transfer',
+            'proof_file_path' => $path,
+            'status' => 'approved',
+            'verified_by' => $this->bendahara->id,
+            'verified_at' => now(),
+        ]);
+
+        $tx = FinancialTransaction::create([
+            'type' => 'income',
+            'amount' => '10000.00',
+            'transaction_date' => now()->toDateString(),
+            'category' => 'Iuran Kas',
+            'description' => 'Iuran Kas ' . $this->mahasiswa->name,
+            'payment_id' => $payment->id,
+            'created_by' => $this->bendahara->id,
+        ]);
+
+        // Other student attempting to view this payment proof via transaction route is forbidden (403)
+        $forbiddenResponse = $this->actingAs($otherStudent)->get(route('transactions.receipt', $tx));
+        $forbiddenResponse->assertStatus(403);
+
+        // Owner student can view their own payment proof (200)
+        $ownerResponse = $this->actingAs($this->mahasiswa)->get(route('transactions.receipt', $tx));
+        $ownerResponse->assertStatus(200);
+
+        // Treasurer can view any payment proof (200)
+        $treasurerResponse = $this->actingAs($this->bendahara)->get(route('transactions.receipt', $tx));
+        $treasurerResponse->assertStatus(200);
+    }
+
+    public function test_expense_controller_stores_receipt_in_local_disk(): void
+    {
+        $file = $this->createFakeJpg('nota_dashboard.jpg');
+
+        $response = $this->actingAs($this->bendahara)->post(route('bendahara.transactions.expense.store'), [
+            'amount' => 25000,
+            'transaction_date' => '2026-09-25',
+            'category' => 'Konsumsi',
+            'description' => 'Beli snack diskusi',
+            'receipt_file' => $file,
+        ]);
+
+        $response->assertRedirect();
+        $response->assertSessionHas('success');
+
+        $tx = FinancialTransaction::where('description', 'Beli snack diskusi')->first();
+        $this->assertNotNull($tx);
+        $this->assertNotNull($tx->receipt_path);
+
+        Storage::disk('local')->assertExists($tx->receipt_path);
+    }
 }
+
